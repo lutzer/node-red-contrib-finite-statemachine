@@ -1,5 +1,5 @@
 {
-  "name": "node-red-statemachine",
+  "name": "node-red-contrib-statemachine",
   "version": "1.1.1",
   "description": "",
   "scripts": {
