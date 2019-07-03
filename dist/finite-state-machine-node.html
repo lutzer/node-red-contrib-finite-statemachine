@@ -1,0 +1,186 @@
+<style>
+	svg {
+		background-color: #efefef;
+	}
+
+	.state-circle {
+		fill: #fff;
+		stroke: #000;
+		fill-opacity: 0.2;
+		stroke-opacity: 0;
+		cursor: pointer;
+	}
+
+	.state-circle.active {
+		fill-opacity: 1;
+		stroke-opacity: 1;
+	}
+
+	.state-circle-text {
+		fill-opacity: 0.2;
+		cursor: pointer;
+		pointer-events: none;
+	}
+
+	.state-circle-text.active {
+		fill-opacity: 1
+	}
+
+	.transition-line {
+		stroke: #000;
+	}
+
+	.transition-curve {
+		stroke: #000;
+		stroke.width: 1;
+		fill: none;
+	}
+
+	.arrow{
+		stroke-width:5;
+		stroke:#000;
+		stroke-dasharray:5, 5;
+	}
+</style>
+<script type="text/javascript">var stateMachineGraph=function(t,e,r){var n=d3.select("#fsm-graph").append("svg").attr("height",r).attr("width",e).call(d3.behavior.zoom().on("zoom",function(){n.attr("transform","translate("+d3.event.translate+") scale("+d3.event.scale+")")})).append("g");function a(t,e){return{x:t.x+e.x,y:t.y+e.y}}function s(t,e){return{x:t.x*e,y:t.y*e}}function o(t,e){return a(t,s(e,-1))}function i(t){return s(t,1/function(t){return Math.sqrt(t.x*t.x+t.y*t.y)}(t))}var c=40,u=d3.svg.line().x(function(t){return t.x?t.x:0}).y(function(t){return t.y?t.y:0}).interpolate("basis"),d=Object.keys(t.transitions),l={nodes:d.map(function(t){return{name:t,active:!1}}),transitions:d.map(function(e,r){var n=[];return Object.keys(t.transitions[e]).forEach(function(a,s){var o=d.findIndex(function(r){return r===t.transitions[e][a]});o>-1&&n.push({source:r,target:o,name:a,offset:s})}),n}).flat()};l.nodes.forEach(function(t,n){t.x=e/2+Math.cos(n/l.nodes.length*Math.PI*2)*e/4,t.y=r/2+Math.sin(n/l.nodes.length*Math.PI*2)*r/4}),l.transitions.forEach(function(t){l.nodes[t.source].active=!0,l.nodes[t.target].active=!0});var f=l.transitions;n.append("defs").append("marker").attr({id:"arrow",viewBox:"0 -5 10 10",refX:10,refY:0,markerWidth:10,markerHeight:10,orient:"auto"}).append("path").attr("d","M0,-5L10,0L0,5").attr("class","arrowHead");var x=d3.layout.force().size([e,r]).nodes(l.nodes).links(f).linkDistance(5*c).gravity(.1).charge(-2e3),v=n.selectAll("path.transition-curve").data(l.transitions);v.enter().append("path").attr({class:"transition-curve","marker-end":"url(#arrow)"}),v.exit().remove();var y=n.selectAll("text.transition-labels").data(l.transitions);y.enter().append("text").attr({"text-anchor":"middle",class:"transition-labels"}).text(function(t){return t.name});var h=n.selectAll("g.state-element").data(l.nodes),p=d3.behavior.drag().on("dragstart",function(t,e){x.resume()}).on("drag",function(t){t.x+=d3.event.x,t.y+=d3.event.y,m(),x.resume()}).on("dragend",function(t,e){x.resume()}),g=h.enter().append("g").attr({class:"state-element",transform:function(t){return"translate("+t.x+","+t.y+")"}});function m(){h.attr("transform",function(t){return"translate("+t.x+","+t.y+")"}),v.attr({d:function(t){var e=s(a(t.target,t.source),.5),r=a(e,s(i({x:t.target.y-t.source.y,y:-(t.target.x-t.source.x)}),c+10)),n=o(t.target,s(i(o(t.target,r)),c)),d=[{x:t.source.x,y:t.source.y},r,n];return u(d)}}),y.attr("transform",function(t){var e=s(a(t.target,t.source),.5),r=a(e,s(i({x:t.target.y-t.source.y,y:-(t.target.x-t.source.x)}),c+10)),n=o(t.target,t.source),u=180*Math.atan2(n.y,n.x)/Math.PI;return u=(u=u>90?u-180:u)<-90?u+180:u,"translate("+r.x+","+r.y+") rotate("+u+")"})}g.append("circle").attr({r:c,class:function(t){return t.active?"state-circle active":"state-circle"}}).call(p),g.append("text").attr({"text-anchor":"middle",y:5,class:function(t){return t.active?"state-circle-text active":"state-circle-text"}}).text(function(t){return t.name}),h.exit().remove(),x.on("tick",function(){m()}),x.start()};</script>
+<script type="text/javascript">
+
+	function drawStateMachine(definitions, width, height) {
+		stateMachineGraph(definitions, width, height)
+	}
+
+	RED.nodes.registerType('finite-state-machine',{
+	category: 'function',
+	color: '#a6bbcf',
+	defaults: {
+	name: { value: "" },
+		fsmDefinition: { value: undefined },
+		showTransitionErrors: { value: true }
+	},
+	inputs:1,
+	outputs:3,
+	icon: "file.png",
+	label: function() {
+		return this.name || "finite-state-machine";
+	},
+	inputLabels: "trigger",
+	outputLabels: ["changed", "statusChanged", "dataChanged" ], 
+	oneditprepare: function() {
+
+		// create definiton input field
+		let definitionInput = $("#node-input-fsmDefinition")
+		definitionInput.typedInput({
+					default: 'json',
+					types: ['json'],
+					typeField: $("#node-input-fsmDefinition")
+				});
+		definitionInput.typedInput( 'value', this.fsmDefinition );
+
+		definitionInput.on("change", function(type, value) {
+			try {
+				var json = JSON.parse(definitionInput.typedInput('value'));
+				drawStateMachine(json, 500, 500);
+			} catch (e) {
+				//do nothing
+			}
+		});
+	},
+	oneditsave: function() {
+		return;
+	}
+	});
+</script>
+
+<script type="text/x-red" data-template-name="finite-state-machine">
+	<div class="form-row">
+	<label for="node-input-name"><i class="icon-tag"></i> Name</label>
+	<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+	<div class="form-row">
+	<label for="node-input-fsmDefinition"><i class="icon-tag"></i> FSM</label>
+	<input type="text" id="node-input-fsmDefinition" placeholder="Name">
+	</div>
+	<div class="form-row">
+	<label>&nbsp;</label>
+	<input type="checkbox" id="node-input-showTransitionErrors" style="display: inline-block; width: auto; vertical-align: top;">
+	<label for="node-input-showTransitionErrors" style="width: 70%;">Show Transition Errors </label>
+	</div>
+	<div class="form-row">
+		<div id="fsm-graph">
+		</div>
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="finite-state-machine">
+	<p>A finite state machine implementation for node red</p>
+
+	<h3>Properties</h3>
+		<dl class="message-properties">
+			<dt>name<span class="property-type">string</span></dt>
+			<dd>The name of the node as displayed in the editor</dd>
+			<dt>FSM<span class="property-type">json </span></dt>
+			<dd>
+	The json object which descibes the state machine.
+	It needs to contain the initial state and possible transitions.
+	For more information see example below</dd>
+			<dt>Show Transition Errors<span class="property-type">boolean </span></dt>
+			<dd>Enable / disable error msgs when triggering actions.</dd>
+		</dl>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	<dt>topic <span class="property-type">string</span></dt>
+	<dd>
+		- <i>reset</i> to reset to initial state<br/>
+		- <i>[transition]</i> to trigger a state change<br/>
+	</dd>
+		<dt>payload <span class="property-type">json</span> </dt>
+		<dd>
+			May contain a json payload, to add to the state output Example: <code>{ "x" : 10.0, y: "test" }</code>
+		 </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<ol class="node-ports">
+		<li>changed
+			<dl class="message-properties">
+				<dt>payload <span class="property-type">json</span></dt>
+				<dd>Outputs the new state when there is any change in state.</dd>
+			</dl>
+        </li>
+        <li>statusChanged
+			<dl class="message-properties">
+				<dt>payload <span class="property-type">json</span></dt>
+				<dd>Outputs the new state only when the machine transitioned to a new status</dd>
+			</dl>
+        </li>
+        <li>dataChanged
+			<dl class="message-properties">
+				<dt>payload <span class="property-type">json</span></dt>
+				<dd>Outputs the new state only when the data object of the state is changed</dd>
+			</dl>
+		</li>
+	</ol>
+
+	<h3>Details</h3>
+		<p>Example json code for FSM:
+<pre>{
+  "state": {
+    "status": "IDLE",
+    "data" : { "x": 5 }
+  },
+  "transitions": {
+	"IDLE": {
+	  "run": "RUNNING"
+	},
+	"RUNNING": {
+	  "stop": "IDLE"
+	}
+  }
+}</pre>
+The fsm object must contain a state object with a status property which represents the initial state.
+The transition object contains all the possible states with the corresponding transitions.
+"reset" is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.
+</p>
+
+</script>

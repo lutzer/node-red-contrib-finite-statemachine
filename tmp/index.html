@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+	<style>
+		svg {
+			background-color: #efefef;
+		}
+
+		.state-circle {
+			fill: #fff;
+			stroke: #000;
+			fill-opacity: 0.2;
+			stroke-opacity: 0;
+			cursor: pointer;
+		}
+
+		.state-circle.active {
+			fill-opacity: 1;
+			stroke-opacity: 1;
+		}
+
+		.state-circle-text {
+			fill-opacity: 0.2;
+			cursor: pointer;
+			pointer-events: none;
+		}
+
+		.state-circle-text.active {
+			fill-opacity: 1
+		}
+
+		.transition-line {
+			stroke: #000;
+		}
+
+		.transition-curve {
+			stroke: #000;
+			stroke.width: 1;
+			fill: none;
+		}
+
+		.arrow{
+			stroke-width:5;
+			stroke:#000;
+			stroke-dasharray:5, 5;
+		}
+	</style>
+<body>
+	<div id="fsm-graph">
+	</div>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script>
+
+		// VECTOR OPERATIONS
+		function vectorAdd(v1, v2) {
+			return { x: v1.x + v2.x, y: v1.y + v2.y };
+		}
+
+		function vectorMultiply(v1, s) {
+			return { x: v1.x * s, y: v1.y * s };
+		}
+
+		function vectorLength(v1) {
+			return Math.sqrt( v1.x*v1.x + v1.y*v1.y );
+		}
+
+		function vectorSubtract(v1, v2) {
+			return vectorAdd(v1, vectorMultiply(v2,-1));
+		}
+
+		function vectorNormalize(v1) {
+			return vectorMultiply(v1,1/vectorLength(v1));
+		}
+
+		var fsm = {
+			state: { name: 'STOPPED' },
+			transitions: {
+				'STOPPED': {
+					'push': 'RUNNING',
+					'hit': 'BROKEN'
+				},
+				'RUNNING': {
+					'pull': 'STOPPED',
+					'hit': 'BROKEN'
+				},
+				'BROKEN': {
+					'fix': 'STOPPED'
+				}
+			},
+			dataFields: [ 'x', 'y', 'z' ]
+		};
+
+		console.log(Object.keys(fsm.transitions));
+
+
+		let width = 500;
+		let height = 500;
+
+		let CIRCLE_RADIUS = 40
+
+		let lineFunction = d3.svg.line()
+			.x(function(d) { return d.x ? d.x : 0 })
+			.y(function(d) { return d.y ? d.y : 0 })
+			.interpolate("basis");
+
+		let states = Object.keys(fsm.transitions)
+
+		let data = {
+			nodes: states.map(function (state) {
+				return { name: state, active: false };
+			}),
+			transitions: states.map(function (state, index) {
+				var result = [];
+				var transitionNames = Object.keys(fsm.transitions[state]);
+				transitionNames.forEach(function (val) {
+					console.log([states, fsm.transitions[state][val]])
+					var target = states.findIndex(function(elem) {
+						return elem == fsm.transitions[state][val];
+					});
+					console.log(target)
+					if (target > -1) {
+						result.push({ source: index, target: target, name: val })
+					}
+				})
+				return result;
+			}).flat()
+		};
+
+		console.log(data.transitions)
+
+		// let data = {
+		// 	nodes: [
+		// 		{ name: "test1", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test2", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test3", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test4", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test4", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test4", x: width/2, y: height/2, active: false  },
+		// 		{ name: "test4", x: width/2, y: height/2, active: false  }
+		// 	],
+		// 	transitions: [
+		// 		{ source: 1, target: 3, name: "push" },
+		// 		{ source: 2, target: 1, name: "pull" },
+		// 		{ source: 3, target: 1, name: "hit" },
+		// 		{ source: 0, target: 1, name: "open" },
+		// 		{ source: 3, target: 2, name: "open" },
+		// 	]
+		// }
+
+		// place nodes in circle
+		data.nodes.forEach( (value, index) => {
+			value.x = width/2 + Math.cos(index/data.nodes.length * Math.PI * 2) * width/4
+			value.y = height/2 + Math.sin(index/data.nodes.length * Math.PI * 2) * height/4
+		});
+
+		data.transitions.forEach( (value) => {
+			if (data.nodes[value.source] && data.nodes[value.target]) {
+				data.nodes[value.source].active = true;
+				data.nodes[value.target].active = true;
+			}
+		})
+
+		forceLinks = data.transitions;
+
+		let svg = d3.select("#fsm-graph")
+			.append("svg")
+			.attr("height", width)
+			.attr("width", height);
+
+		// define arrow heads
+		defs = svg.append("defs")
+		defs.append("marker")
+				.attr({
+					"id":"arrow",
+					"viewBox":"0 -5 10 10",
+					"refX":10,
+					"refY":0,
+					"markerWidth":10,
+					"markerHeight":10,
+					"orient":"auto"
+				}).append("path")
+					.attr("d", "M0,-5L10,0L0,5")
+					.attr("class","arrowHead");
+
+		let force = d3.layout.force()
+			.size([width, height])
+			.nodes(data.nodes)
+			.links(forceLinks)
+			.linkDistance(CIRCLE_RADIUS*5)
+			.gravity(0.05)
+			.charge(-250)
+			// .charge(function(d, i) { return 0 })
+
+
+		// ADD TRANSITION CURVES
+		var curves = svg.selectAll("path.transition-curve").data(data.transitions);
+
+		var curveElement = curves.enter()
+			.append("path")
+			.attr({
+				class: "transition-curve",
+				"marker-end": "url(#arrow)",
+			})
+
+		curves.exit().remove();
+
+		// ADD TRANSITION LABELS
+		var lineLabels = svg.selectAll("text.transition-labels").data(data.transitions);
+
+		var labelElement = lineLabels.enter()
+			.append("text")
+			.attr({
+				'text-anchor': 'middle',
+				class: "transition-labels"
+			})
+			.text( (d) => d.name )
+
+		// ADD NODES
+		var nodes = svg.selectAll("g.state-element").data(data.nodes);
+
+		var node_drag = d3.behavior.drag()
+			.on("dragstart", dragstart)
+			.on("drag", dragmove)
+			.on("dragend", dragend);
+
+		var stateElement = nodes.enter()
+			.append("g")
+			.attr({
+				class : "state-element",
+				transform : (data) => {
+					return "translate("+data.x+","+data.y+")";
+				},
+			})
+
+		stateElement.append("circle")
+			.attr({
+				r: CIRCLE_RADIUS,
+				class: (d) => d.active ? "state-circle active" : "state-circle" ,
+			}).call(node_drag);
+
+		console.log(d3);
+		stateElement.append("text")
+			.attr({
+				'text-anchor': 'middle',
+				y: 5,
+				class: (d) => d.active ? "state-circle-text active" : "state-circle-text" ,
+			})
+			.text( function(data) {
+				return data.name
+			});
+
+		nodes.exit().remove();
+
+
+		force.on('tick', function() {
+			update();
+		});
+
+		var disableForceOn = -1;
+
+		function update() {
+			nodes.attr('transform', (data) => {
+				return "translate("+data.x+","+data.y+")";
+			})
+
+			curves.attr({
+				d : (d) => {
+					// middle point
+					const mp = vectorMultiply( vectorAdd(d.target, d.source), 0.5 );
+
+					//orthagonal
+					const orth = vectorNormalize({
+						x: (d.target.y - d.source.y),
+						y: - (d.target.x - d.source.x)
+					});
+
+					const curveMp = vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 20) );
+
+					// intersect point with target circle
+					const endpoint = vectorSubtract(d.target, vectorMultiply( vectorNormalize( vectorSubtract(d.target, curveMp) ), CIRCLE_RADIUS ));
+
+					let coords = [ { x: d.source.x, y: d.source.y }, curveMp, endpoint ]
+					return lineFunction(coords)
+				}
+			})
+
+			lineLabels.attr('transform', (d) => {
+				const mp = vectorMultiply( vectorAdd(d.target, d.source), 0.5 );
+
+				const orth = vectorNormalize({
+					x: (d.target.y - d.source.y),
+					y: - (d.target.x - d.source.x)
+				});
+				const curveMp = vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 20) );
+
+				//rotation
+				const sub = vectorSubtract(d.target, d.source);
+
+				let angle = Math.atan2(sub.y,sub.x) * 180 / Math.PI;
+
+				//dont have text upside down
+				angle = angle > 90 ? angle - 180 : angle;
+				angle = angle < -90 ? angle + 180 : angle;
+
+				return "translate(" +curveMp.x+ "," +curveMp.y+ ") rotate("+angle+")";
+			});
+		}
+
+		function dragmove(d) {
+        	d.x += d3.event.x;
+        	d.y += d3.event.y;
+			update();
+		}
+
+		function dragstart(d,i) {
+			force.stop();
+		}
+
+		function dragend(d,i) {
+			force.resume();
+		}
+
+		force.start();
+
+	</script>
+</body>
