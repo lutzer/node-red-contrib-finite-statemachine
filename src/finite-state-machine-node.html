@@ -78,8 +78,11 @@
 
 		definitionInput.on("change", function(type, value) {
 			try {
-				var json = JSON.parse(definitionInput.typedInput('value'));
-				drawStateMachine(json, 500, 500);
+                var json = JSON.parse(definitionInput.typedInput('value'));
+                $('#fsm-graph').empty();
+                setTimeout( function() {
+                    drawStateMachine(json, 500, 500);
+                },500)
 			} catch (e) {
 				//do nothing
 			}
@@ -106,8 +109,9 @@
 	<label for="node-input-showTransitionErrors" style="width: 70%;">Show Transition Errors </label>
 	</div>
 	<div class="form-row">
+        <p>left-click: move / right-click: zoom</p>
 		<div id="fsm-graph">
-		</div>
+        </div>
 	</div>
 </script>
 

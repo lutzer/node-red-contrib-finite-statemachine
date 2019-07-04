@@ -3,14 +3,23 @@
 
 /* draws a graphical visualisation of the statemachine with d3 */
 var stateMachineGraph = function (definition, width, height) {
-    
-	// create svg graph canvas
-    var svg = d3.select('#fsm-graph')
-		.append('svg')
+
+    console.log(definition)
+
+    var canvas = d3.select('#fsm-graph');
+
+    // clear canvas
+    canvas.selectAll('svg').remove();
+
+	// create svg canvas
+    var svg = canvas.append('svg')
 		.attr('height', height)
         .attr('width', width)
         .call(d3.behavior.zoom().on("zoom", onZoom))
         .append("g")
+
+
+    console.log(svg)
 
 	// VECTOR OPERATIONS
 	function vectorAdd (v1, v2) {
