@@ -21,6 +21,8 @@ Check node-reds info panel to see how to use the state machine
 
 ### Example Flow
 
+Set finite state machine definiton to:
+
 ```javascript
 {
   "state": {
