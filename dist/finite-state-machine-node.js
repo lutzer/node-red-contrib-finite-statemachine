@@ -23,12 +23,12 @@ module.exports = function (RED) {
         }
         
         // react to all changes
-        nodeContext.dataChangeListener = nodeContext.machine.pipe( distinctUntilChanged() ).subscribe((state) => {
+        nodeContext.allChangeListener = nodeContext.machine.pipe( distinctUntilChanged() ).subscribe((state) => {
 			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
-			node.send([ {
+			sendOutput({
 				topic: 'state',
 				payload: state
-			}, null, null]);
+			}, null, null);
         });
 
 		// react to status changes
@@ -36,10 +36,10 @@ module.exports = function (RED) {
             return prev.status === curr.status;
         })).subscribe((state) => {
 			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
-			node.send([ null, {
+			sendOutput(null, {
 				topic: 'state',
 				payload: state
-			}, null ]);
+			}, null );
         });
 
         // react to data changes
@@ -47,10 +47,10 @@ module.exports = function (RED) {
             return _.isEqual(prev.data, curr.data);
         })).subscribe((state) => {
 			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
-			node.send([ null, null, {
+			sendOutput(null, null, {
 				topic: 'state',
 				payload: state
-			}]);
+			});
         });
        
 
@@ -77,7 +77,8 @@ module.exports = function (RED) {
 
 		node.on('close', function () {
             nodeContext.stateChangeListener.unsubscribe();
-            nodeContext.dataChangeListener.unsubscribe();
+			nodeContext.dataChangeListener.unsubscribe();
+			nodeContext.allChangeListener.unsubscribe();
         });
         
         function sendOutput(changed = null, statusChanged = null, dataChanged = null) {

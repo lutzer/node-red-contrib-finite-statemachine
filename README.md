@@ -1,6 +1,8 @@
 # NODE RED STATEMACHINE
 
-A finite state machine implementation for node red
+A finite state machine implementation for node red. Displays also a graphical representation of the state machine.
+
+![node-settings](/Users/lutz/Projects/node-red-contrib-statemachine/images/node-settings.png)
 
 ## Install in node
 
@@ -16,6 +18,55 @@ A finite state machine implementation for node red
 ## Usage
 
 Check node-reds info panel to see how to use the state machine
+
+### Example Flow
+
+```javascript
+{
+  "state": {
+    "status": "IDLE",
+    "data" : { "x": 5 }
+  },
+  "transitions": {
+    "IDLE": {
+      "run": "RUNNING"
+    },
+    "RUNNING": {
+      "stop": "IDLE",
+			"set": "RUNNING"
+​   }
+  }
+}
+```
+
+![flow](/Users/lutz/Projects/node-red-contrib-statemachine/images/flow.png)
+
+
+
+### Feedback Flow
+
+Set finite state machine definiton to:
+
+```javascript
+{
+  "state": {
+    "status": "IDLE",
+    "data" : { "x": 5 }
+  },
+  "transitions": {
+    "IDLE": {
+      "run": "RUNNING"
+    },
+    "RUNNING": {
+      "stop": "IDLE"
+    }
+  }
+}
+```
+
+![node-settings](/Users/lutz/Projects/node-red-contrib-statemachine/images/node-settings.png
+
+![flow-feedback](/Users/lutz/Projects/node-red-contrib-statemachine/images/flow-feedback.png)
 
 ## Development
 
