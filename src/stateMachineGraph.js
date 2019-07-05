@@ -4,8 +4,6 @@
 /* draws a graphical visualisation of the statemachine with d3 */
 var stateMachineGraph = function (definition, width, height) {
 
-    console.log(definition)
-
     var canvas = d3.select('#fsm-graph');
 
     // clear canvas
@@ -39,7 +37,11 @@ var stateMachineGraph = function (definition, width, height) {
 	}
 
 	function vectorNormalize (v1) {
-		return vectorMultiply(v1, 1 / vectorLength(v1));
+		var length = vectorLength(v1)
+		if (length == 0)
+			return v1;
+		else
+			return vectorMultiply(v1, 1 / length);
 	}
 
 	var CIRCLE_RADIUS = 40;
@@ -176,36 +178,49 @@ var stateMachineGraph = function (definition, width, height) {
 
 		curves.attr({
 			d: function (d) {
+
+				var targetIsSource = source = d.target.index == d.source.index
+
+				var source = !targetIsSource ? d.source : { x : d.source.x + CIRCLE_RADIUS * .7, y: d.source.y };
+				var target = !targetIsSource ? d.target : { x : d.target.x - CIRCLE_RADIUS * .7, y: d.target.y };
+
 				// middle point
-				var mp = vectorMultiply(vectorAdd(d.target, d.source), 0.5);
+				var mp = vectorMultiply(vectorAdd(target, source), 0.5)
 
 				// orthagonal
 				var orth = vectorNormalize({
-					x: (d.target.y - d.source.y),
-					y: -(d.target.x - d.source.x)
+					x: (target.y - source.y),
+					y: -(target.x - source.x)
 				});
 
-				var curveMp = vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 10));
+				var curveMp = !targetIsSource ? vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 10)) : vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 50));
 
 				// intersect point with target circle
-				var endpoint = vectorSubtract(d.target, vectorMultiply(vectorNormalize(vectorSubtract(d.target, curveMp)), CIRCLE_RADIUS));
+				var endpoint = vectorSubtract(target, vectorMultiply(vectorNormalize(vectorSubtract(target, curveMp)), CIRCLE_RADIUS));
 
-				var coords = [ { x: d.source.x, y: d.source.y }, curveMp, endpoint ];
+				var coords = [ source, curveMp, endpoint ];
 				return lineFunction(coords);
 			}
 		});
 
 		lineLabels.attr('transform', function (d) {
-			var mp = vectorMultiply(vectorAdd(d.target, d.source), 0.5);
+
+			var targetIsSource = source = d.target.index == d.source.index
+
+			var source = !targetIsSource ? d.source : { x : d.source.x + CIRCLE_RADIUS * .7, y: d.source.y };
+			var target = !targetIsSource ? d.target : { x : d.target.x - CIRCLE_RADIUS * .7, y: d.target.y };
+
+			var mp = vectorMultiply(vectorAdd(target, source), 0.5)
 
 			var orth = vectorNormalize({
-				x: (d.target.y - d.source.y),
-				y: -(d.target.x - d.source.x)
-			});
-			var curveMp = vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 10));
+					x: (target.y - source.y),
+					y: -(target.x - source.x)
+				});
+
+			var curveMp = !targetIsSource ? vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 10)) : vectorAdd(mp, vectorMultiply(orth, CIRCLE_RADIUS + 50));
 
 			// rotation
-			var sub = vectorSubtract(d.target, d.source);
+			var sub = vectorSubtract(target, source);
 
 			var angle = Math.atan2(sub.y, sub.x) * 180 / Math.PI;
 
