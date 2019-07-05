@@ -18,7 +18,7 @@ module.exports = function (RED) {
 		try {
 			nodeContext.machine = new StateMachine(JSON.parse(config.fsmDefinition));
 		} catch (err) {
-			node.error("statemachine-error", err.message);
+			node.error("statemachine-error", { message: err.message } );
 			return;
         }
         
@@ -35,7 +35,6 @@ module.exports = function (RED) {
 		nodeContext.stateChangeListener = nodeContext.machine.pipe(distinctUntilChanged( (prev, curr) => {
             return prev.status === curr.status;
         })).subscribe((state) => {
-			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
 			sendOutput(null, {
 				topic: 'state',
 				payload: state
@@ -46,7 +45,6 @@ module.exports = function (RED) {
         nodeContext.dataChangeListener = nodeContext.machine.pipe(distinctUntilChanged( (prev, curr) => {
             return _.isEqual(prev.data, curr.data);
         })).subscribe((state) => {
-			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
 			sendOutput(null, null, {
 				topic: 'state',
 				payload: state
@@ -69,7 +67,7 @@ module.exports = function (RED) {
 					nodeContext.machine.triggerAction(action);
 				} catch (err) {
 					if (config.showTransitionErrors) {
-						node.error("statemachine-error", err.message);
+						node.error("statemachine-error", { message: err.message } );
 					}
 				}
             }
