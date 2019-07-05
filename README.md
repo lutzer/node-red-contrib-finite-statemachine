@@ -33,7 +33,7 @@ Check node-reds info panel to see how to use the state machine
     },
     "RUNNING": {
       "stop": "IDLE",
-			"set": "RUNNING"
+	  "set": "RUNNING"
 ​   }
   }
 }
