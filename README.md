@@ -2,7 +2,7 @@
 
 A finite state machine implementation for node red. Displays also a graphical representation of the state machine.
 
-![node-settings](/Users/lutz/Projects/node-red-contrib-statemachine/images/node-settings.png)
+![node-settings](images/node-settings.png)
 
 ## Install in node
 
@@ -39,7 +39,7 @@ Check node-reds info panel to see how to use the state machine
 }
 ```
 
-![flow](/Users/lutz/Projects/node-red-contrib-statemachine/images/flow.png)
+![flow](images/flow.png)
 
 
 
@@ -66,7 +66,7 @@ Set finite state machine definiton to:
 
 ![node-settings](/Users/lutz/Projects/node-red-contrib-statemachine/images/node-settings.png
 
-![flow-feedback](/Users/lutz/Projects/node-red-contrib-statemachine/images/flow-feedback.png)
+![flow-feedback](images/flow-feedback.png)
 
 ## Development
 
