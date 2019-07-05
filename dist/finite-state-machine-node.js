@@ -18,7 +18,7 @@ module.exports = function (RED) {
 		try {
 			nodeContext.machine = new StateMachine(JSON.parse(config.fsmDefinition));
 		} catch (err) {
-			node.error("statemachine-error", { message: err.message } );
+			node.error(err.message, { message: err.message } );
 			return;
         }
         

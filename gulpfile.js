@@ -18,7 +18,7 @@ gulp.task('copy', function () {
 
 gulp.task('build:html', function () {
 	return gulp.src(paths.nodeHtml)
-	.pipe(inlinesource({compress: 'false'}))
+	.pipe(inlinesource({compress: 'true'}))
 	.pipe(gulp.dest(paths.build));
 });
 
