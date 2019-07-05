@@ -16,9 +16,6 @@ var stateMachineGraph = function (definition, width, height) {
         .call(d3.behavior.zoom().on("zoom", onZoom))
         .append("g")
 
-
-    console.log(svg)
-
 	// VECTOR OPERATIONS
 	function vectorAdd (v1, v2) {
 		return { x: v1.x + v2.x, y: v1.y + v2.y };

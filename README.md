@@ -4,16 +4,16 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ![node-settings](images/node-settings.png)
 
-## Install in node
+## Install in Node Red
 
 ### Inside Node-red
 
-* TODO
+* Via Manage Palette -> Search for "node-red-contrib-finite-statemachine"
 
 ### From Terminal
 
 * go in node-red install folder, in os x its usually: `~/.node-red`
-* run `npm install git+https://github.com/lutzer/node-red-contrib-statemachine.git`
+* run `npm install node-red-contrib-finite-statemachine`
 
 ## Usage
 
