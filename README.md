@@ -64,8 +64,6 @@ Set finite state machine definiton to:
 }
 ```
 
-![node-settings](/Users/lutz/Projects/node-red-contrib-statemachine/images/node-settings.png
-
 ![flow-feedback](images/flow-feedback.png)
 
 ## Development
