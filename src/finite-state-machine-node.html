@@ -49,12 +49,27 @@
 		stateMachineGraph(definitions, width, height)
 	}
 
+	var  defaultFsm = { 
+		"state": {
+			"status": "IDLE",
+			"data" : { "x": 5 }
+		},
+		"transitions": {
+			"IDLE": {
+				"run": "RUNNING"
+			},
+			"RUNNING": {
+				"stop": "IDLE"
+			}
+		}
+	}
+
 	RED.nodes.registerType('finite-state-machine',{
 	category: 'function',
 	color: '#a6bbcf',
 	defaults: {
-	name: { value: "" },
-		fsmDefinition: { value: undefined },
+		name: { value: "" },
+		fsmDefinition: { value: JSON.stringify(defaultFsm) },
 		showTransitionErrors: { value: true }
 	},
 	inputs:1,

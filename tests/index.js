@@ -6,7 +6,7 @@ const { StateMachine } = require('./../src/statemachine.js');
 
 const createTestMachine = () => {
 	return new StateMachine({
-		state: { name: 'STOPPED' },
+		state: { status: 'STOPPED' },
 		transitions: {
 			'STOPPED': {
 				'push': 'RUNNING',
@@ -19,15 +19,14 @@ const createTestMachine = () => {
 			'BROKEN': {
 				'fix': 'STOPPED'
 			}
-		},
-		dataFields: [ 'x', 'y', 'z' ]
+		}
 	});
 };
 
 describe('Statemachine Tests', function () {
 	it('should be able to create a statemachine', () => {
 		let fsm = new StateMachine({
-			state: {name: 'TEST'},
+			state: { status: 'TEST' },
 			transitions: {}
 		});
 		assert(fsm);
@@ -35,7 +34,7 @@ describe('Statemachine Tests', function () {
 
 	it('should be able to create a statemachine and get the possible transitions', () => {
 		let fsm = new StateMachine({
-			state: {name: 'INITIAL'},
+			state: { status: 'INITIAL'},
 			transitions: {
 				'INITIAL': {
 					'push': 'RUNNING',
@@ -55,7 +54,7 @@ describe('Statemachine Tests', function () {
 
 		let newState = fsm.getState();
 
-		assert(_.isEqual(newState, {name: 'RUNNING', data: {} }));
+		assert(_.isEqual(newState, {status: 'RUNNING', data: {} }));
 	});
 
 	it('should be able to transition to a new state and then reset', () => {
@@ -63,11 +62,11 @@ describe('Statemachine Tests', function () {
 
 		fsm.triggerAction({ type: 'push' });
 
-		assert.equal(fsm.getState().name, 'RUNNING');
+		assert.equal(fsm.getState().status, 'RUNNING');
 
 		fsm.reset();
 
-		assert.equal(fsm.getState().name, 'STOPPED');
+		assert.equal(fsm.getState().status, 'STOPPED');
 	});
 
 	it('should be able to add aditoninal data to state', () => {
@@ -111,4 +110,15 @@ describe('Statemachine Tests', function () {
 			assert.equal(e.code, 12);
 		}
 	});
+
+	it('should be able to subscribe to state change', (done) => {
+		let fsm = createTestMachine();
+
+		fsm.subscribe( (state) => {
+			assert.equal(state.status, "RUNNING");
+			done();
+		})
+
+		fsm.triggerAction({ type: 'push' });
+	})
 });

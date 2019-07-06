@@ -35,7 +35,7 @@ Set finite state machine definiton to:
     },
     "RUNNING": {
       "stop": "IDLE",
-	  "set": "RUNNING"
+	    "set": "RUNNING"
 ​   }
   }
 }
