@@ -49,11 +49,17 @@ module.exports = function (RED) {
 				topic: 'state',
 				payload: state
 			});
-        });
-       
-
-		// send initial state
+		});
+		
+		// initialize node status
 		nodeContext.machine.next(nodeContext.machine.getState());
+       
+		// send initial state after 100ms
+		if (config.sendInitialState) {
+			setTimeout( () => {
+				nodeContext.machine.next(nodeContext.machine.getState());
+			},100);
+		}
 
 		node.on('input', function (msg) {
 			if (msg.topic === 'reset') {

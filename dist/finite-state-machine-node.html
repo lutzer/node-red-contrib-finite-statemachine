@@ -70,6 +70,7 @@
 	defaults: {
 		name: { value: "" },
 		fsmDefinition: { value: JSON.stringify(defaultFsm) },
+		sendInitialState : { value : false },
 		showTransitionErrors: { value: true }
 	},
 	inputs:1,
@@ -120,8 +121,13 @@
 	</div>
 	<div class="form-row">
 	<label>&nbsp;</label>
+	<input type="checkbox" id="node-input-sendInitialState" style="display: inline-block; width: auto; vertical-align: top;">
+	<label for="node-input-sendInitialState" style="width: 70%;">Send initial state</label>
+	</div>
+	<div class="form-row">
+	<label>&nbsp;</label>
 	<input type="checkbox" id="node-input-showTransitionErrors" style="display: inline-block; width: auto; vertical-align: top;">
-	<label for="node-input-showTransitionErrors" style="width: 70%;">Throw Transition Errors</label>
+	<label for="node-input-showTransitionErrors" style="width: 70%;">Throw transition errors</label>
 	</div>
 	<div class="form-row">
         <p>left-click: move / right-click: zoom</p>
@@ -142,7 +148,9 @@
 	The json object which descibes the state machine.
 	It needs to contain the initial state and possible transitions.
 	For more information see example below</dd>
-			<dt>Show Transition Errors<span class="property-type">boolean </span></dt>
+			<dt>Send initial state<span class="property-type">boolean </span></dt>
+			<dd>Enable to trigger sending the intital state after 100ms after the flow is started.</dd>
+			<dt>Show transition errors<span class="property-type">boolean </span></dt>
 			<dd>Enable / disable error msgs when triggering actions.</dd>
 		</dl>
 
