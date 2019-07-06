@@ -67,7 +67,7 @@ module.exports = function (RED) {
 					nodeContext.machine.triggerAction(action);
 				} catch (err) {
 					if (config.showTransitionErrors) {
-						node.error("statemachine-error", { message: err.message } );
+						node.error( err.message, { message: err.message } );
 					}
 				}
             }

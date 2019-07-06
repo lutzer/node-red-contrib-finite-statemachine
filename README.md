@@ -1,4 +1,4 @@
-# NODE RED STATEMACHINE
+# Node Red Statemachine
 
 A finite state machine implementation for node red. Displays also a graphical representation of the state machine.
 
@@ -35,7 +35,7 @@ Set finite state machine definiton to:
     },
     "RUNNING": {
       "stop": "IDLE",
-	    "set": "RUNNING"
+      "set": "RUNNING"
 ​   }
   }
 }
@@ -52,8 +52,7 @@ Set finite state machine definiton to:
 ```javascript
 {
   "state": {
-    "status": "IDLE",
-    "data" : { "x": 5 }
+    "status": "IDLE"
   },
   "transitions": {
     "IDLE": {
