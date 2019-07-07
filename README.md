@@ -6,20 +6,49 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ## Install in Node Red
 
-### Inside Node-red
+### In Node-red
 
 * Via Manage Palette -> Search for "node-red-contrib-finite-statemachine"
 
-### From Terminal
+### In Terminal
 
 * go in node-red install folder, in os x its usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
 
 ## Usage
 
-Check node-reds info panel to see how to use the state machine
+The statemachine is defined by a json object:
 
-### Example Flow
+- *state* holds the initial state and might contain a data object.
+- *transitions* holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.
+- sending a msg with the topic set to the transition string to the node will trigger a state change.
+- *reset* is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.
+
+
+```javascript
+{
+  "state": {
+    "status": "IDLE",
+    "data" : { "x": 5 }
+  },
+  "transitions": {
+    "IDLE": {
+      "run": "RUNNING"
+    },
+    "RUNNING": {
+      "stop": "IDLE",
+      "set": "RUNNING"
+    }
+  }
+}
+```
+
+Check node-reds info panel to see more information on how to use the state machine.
+
+
+## Example flows
+
+### Simple statemachine with data object
 
 Set finite state machine definiton to:
 
@@ -45,7 +74,7 @@ Set finite state machine definiton to:
 
 
 
-### Feedback Flow
+### Statemachine with feedback flow
 
 Set finite state machine definiton to:
 

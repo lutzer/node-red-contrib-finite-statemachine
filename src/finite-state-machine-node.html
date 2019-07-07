@@ -147,7 +147,7 @@
 			<dd>
 	The json object which descibes the state machine.
 	It needs to contain the initial state and possible transitions.
-	For more information see example below</dd>
+	For more information see details below</dd>
 			<dt>Send initial state<span class="property-type">boolean </span></dt>
 			<dd>Enable to trigger sending the intital state after 100ms after the flow is started.</dd>
 			<dt>Show transition errors<span class="property-type">boolean </span></dt>
@@ -191,24 +191,27 @@
 	</ol>
 
 	<h3>Details</h3>
-		<p>Example json code for FSM:
+	<p>Example json code for FSM:
 <pre>{
   "state": {
     "status": "IDLE",
     "data" : { "x": 5 }
   },
   "transitions": {
-	"IDLE": {
-	  "run": "RUNNING"
-	},
-	"RUNNING": {
-	  "stop": "IDLE"
-	}
+    "IDLE": {
+      "run": "RUNNING"
+    },
+    "RUNNING": {
+      "stop": "IDLE"
+    }
   }
 }</pre>
-The fsm object must contain a state object with a status property which represents the initial state.
-The transition object contains all the possible states with the corresponding transitions.
-"reset" is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.
-</p>
+	<ul>
+		<li><i>state</i> holds the initial state and might contain a data object.</li>
+		<li><i>transitions</i> holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.</li>
+		<li>sending a msg with the topic set to the transition to the node, will trigger a state change.</li>
+		<li><i>reset</i> is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.</li>
+	</ul>
+	</p>
 
 </script>
