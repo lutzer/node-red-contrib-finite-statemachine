@@ -2,7 +2,7 @@
 /* exported stateMachineGraph */
 
 /* draws a graphical visualisation of the statemachine with d3 */
-var stateMachineGraph = function (definition, width, height) {
+var stateMachineGraph = function (definition, canvasWidth, canvasHeight) {
 
     var canvas = d3.select('#fsm-graph');
 
@@ -11,10 +11,15 @@ var stateMachineGraph = function (definition, width, height) {
 
 	// create svg canvas
     var svg = canvas.append('svg')
-		.attr('height', height)
-        .attr('width', width)
+		.attr('height', canvasHeight)
+        .attr('width', canvasWidth)
         .call(d3.behavior.zoom().on("zoom", onZoom))
-        .append("g")
+		.append("g")
+		
+	// get size
+	var size = canvas.node().getBoundingClientRect();
+	var width = size.width;
+	var height = size.height;
 
 	// VECTOR OPERATIONS
 	function vectorAdd (v1, v2) {

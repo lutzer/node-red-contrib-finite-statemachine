@@ -1,9 +1,10 @@
 <style>
-	svg {
+	#fsm-graph svg {
 		background-color: #efefef;
+		border: 1px solid #cccccc;
 	}
 
-	.state-circle {
+	#fsm-graph .state-circle {
 		fill: #fff;
 		stroke: #000;
 		fill-opacity: 0.2;
@@ -11,38 +12,38 @@
 		cursor: pointer;
 	}
 
-	.state-circle.active {
+	#fsm-graph .state-circle.active {
 		fill-opacity: 1;
 		stroke-opacity: 1;
 	}
 
-	.state-circle-text {
+	#fsm-graph .state-circle-text {
 		fill-opacity: 0.2;
 		cursor: pointer;
 		pointer-events: none;
 	}
 
-	.state-circle-text.active {
+	#fsm-graph .state-circle-text.active {
 		fill-opacity: 1
 	}
 
-	.transition-line {
+	#fsm-graph .transition-line {
 		stroke: #000;
 	}
 
-	.transition-curve {
+	#fsm-graph .transition-curve {
 		stroke: #000;
 		stroke.width: 1;
 		fill: none;
 	}
 
-	.arrow{
+	#fsm-graph .arrow{
 		stroke-width:5;
 		stroke:#000;
 		stroke-dasharray:5, 5;
 	}
 </style>
-<script type="text/javascript">var stateMachineGraph=function(t,e,n){var r=d3.select("#fsm-graph");r.selectAll("svg").remove();var a=r.append("svg").attr("height",n).attr("width",e).call(d3.behavior.zoom().on("zoom",function(){a.attr("transform","translate("+d3.event.translate+") scale("+d3.event.scale+")")})).append("g");function s(t,e){return{x:t.x+e.x,y:t.y+e.y}}function o(t,e){return{x:t.x*e,y:t.y*e}}function i(t,e){return s(t,o(e,-1))}function c(t){var e=function(t){return Math.sqrt(t.x*t.x+t.y*t.y)}(t);return 0==e?t:o(t,1/e)}var u=40,d=d3.svg.line().x(function(t){return t.x?t.x:0}).y(function(t){return t.y?t.y:0}).interpolate("basis"),l=Object.keys(t.transitions),x={nodes:l.map(function(t){return{name:t,active:!1}}),transitions:l.map(function(e,n){var r=[];return Object.keys(t.transitions[e]).forEach(function(a,s){var o=l.findIndex(function(n){return n===t.transitions[e][a]});o>-1&&r.push({source:n,target:o,name:a,offset:s})}),r}).flat()};x.nodes.forEach(function(t,r){t.x=e/2+Math.cos(r/x.nodes.length*Math.PI*2)*e/4,t.y=n/2+Math.sin(r/x.nodes.length*Math.PI*2)*n/4}),x.transitions.forEach(function(t){x.nodes[t.source].active=!0,x.nodes[t.target].active=!0});var f=x.transitions;a.append("defs").append("marker").attr({id:"arrow",viewBox:"0 -5 10 10",refX:10,refY:0,markerWidth:10,markerHeight:10,orient:"auto"}).append("path").attr("d","M0,-5L10,0L0,5").attr("class","arrowHead");var v=d3.layout.force().size([e,n]).nodes(x.nodes).links(f).linkDistance(5*u).gravity(.1).charge(-2e3),y=a.selectAll("path.transition-curve").data(x.transitions);y.enter().append("path").attr({class:"transition-curve","marker-end":"url(#arrow)"}),y.exit().remove();var h=a.selectAll("text.transition-labels").data(x.transitions);h.enter().append("text").attr({"text-anchor":"middle",class:"transition-labels"}).text(function(t){return t.name});var p=a.selectAll("g.state-element").data(x.nodes),g=d3.behavior.drag().on("dragstart",function(t,e){v.resume()}).on("drag",function(t){t.x+=d3.event.x,t.y+=d3.event.y,k(),v.resume()}).on("dragend",function(t,e){v.resume()}),m=p.enter().append("g").attr({class:"state-element",transform:function(t){return"translate("+t.x+","+t.y+")"}});function k(){p.attr("transform",function(t){return"translate("+t.x+","+t.y+")"}),y.attr({d:function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*u,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*u,y:t.target.y}:t.target,a=o(s(r,n),.5),l=c({x:r.y-n.y,y:-(r.x-n.x)}),x=s(a,o(l,e?u+50:u+10)),f=i(r,o(c(i(r,x)),u));return d([n,x,f])}}),h.attr("transform",function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*u,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*u,y:t.target.y}:t.target,a=o(s(r,n),.5),d=c({x:r.y-n.y,y:-(r.x-n.x)}),l=s(a,o(d,e?u+50:u+10)),x=i(r,n),f=180*Math.atan2(x.y,x.x)/Math.PI;return f=(f=f>90?f-180:f)<-90?f+180:f,"translate("+l.x+","+l.y+") rotate("+f+")"})}m.append("circle").attr({r:u,class:function(t){return t.active?"state-circle active":"state-circle"}}).call(g),m.append("text").attr({"text-anchor":"middle",y:5,class:function(t){return t.active?"state-circle-text active":"state-circle-text"}}).text(function(t){return t.name}),p.exit().remove(),v.on("tick",function(){k()}),v.start()};</script>
+<script type="text/javascript">var stateMachineGraph=function(t,e,n){var r=d3.select("#fsm-graph");r.selectAll("svg").remove();var a=r.append("svg").attr("height",n).attr("width",e).call(d3.behavior.zoom().on("zoom",function(){a.attr("transform","translate("+d3.event.translate+") scale("+d3.event.scale+")")})).append("g"),s=r.node().getBoundingClientRect(),i=s.width,o=s.height;function c(t,e){return{x:t.x+e.x,y:t.y+e.y}}function u(t,e){return{x:t.x*e,y:t.y*e}}function d(t,e){return c(t,u(e,-1))}function l(t){var e=function(t){return Math.sqrt(t.x*t.x+t.y*t.y)}(t);return 0==e?t:u(t,1/e)}var x=40,f=d3.svg.line().x(function(t){return t.x?t.x:0}).y(function(t){return t.y?t.y:0}).interpolate("basis"),v=Object.keys(t.transitions),y={nodes:v.map(function(t){return{name:t,active:!1}}),transitions:v.map(function(e,n){var r=[];return Object.keys(t.transitions[e]).forEach(function(a,s){var i=v.findIndex(function(n){return n===t.transitions[e][a]});i>-1&&r.push({source:n,target:i,name:a,offset:s})}),r}).flat()};y.nodes.forEach(function(t,e){t.x=i/2+Math.cos(e/y.nodes.length*Math.PI*2)*i/4,t.y=o/2+Math.sin(e/y.nodes.length*Math.PI*2)*o/4}),y.transitions.forEach(function(t){y.nodes[t.source].active=!0,y.nodes[t.target].active=!0});var h=y.transitions;a.append("defs").append("marker").attr({id:"arrow",viewBox:"0 -5 10 10",refX:10,refY:0,markerWidth:10,markerHeight:10,orient:"auto"}).append("path").attr("d","M0,-5L10,0L0,5").attr("class","arrowHead");var g=d3.layout.force().size([i,o]).nodes(y.nodes).links(h).linkDistance(5*x).gravity(.1).charge(-2e3),p=a.selectAll("path.transition-curve").data(y.transitions);p.enter().append("path").attr({class:"transition-curve","marker-end":"url(#arrow)"}),p.exit().remove();var m=a.selectAll("text.transition-labels").data(y.transitions);m.enter().append("text").attr({"text-anchor":"middle",class:"transition-labels"}).text(function(t){return t.name});var k=a.selectAll("g.state-element").data(y.nodes),M=d3.behavior.drag().on("dragstart",function(t,e){g.resume()}).on("drag",function(t){t.x+=d3.event.x,t.y+=d3.event.y,w(),g.resume()}).on("dragend",function(t,e){g.resume()}),b=k.enter().append("g").attr({class:"state-element",transform:function(t){return"translate("+t.x+","+t.y+")"}});function w(){k.attr("transform",function(t){return"translate("+t.x+","+t.y+")"}),p.attr({d:function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*x,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*x,y:t.target.y}:t.target,a=u(c(r,n),.5),s=l({x:r.y-n.y,y:-(r.x-n.x)}),i=c(a,u(s,e?x+50:x+10)),o=d(r,u(l(d(r,i)),x));return f([n,i,o])}}),m.attr("transform",function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*x,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*x,y:t.target.y}:t.target,a=u(c(r,n),.5),s=l({x:r.y-n.y,y:-(r.x-n.x)}),i=c(a,u(s,e?x+50:x+10)),o=d(r,n),f=180*Math.atan2(o.y,o.x)/Math.PI;return f=(f=f>90?f-180:f)<-90?f+180:f,"translate("+i.x+","+i.y+") rotate("+f+")"})}b.append("circle").attr({r:x,class:function(t){return t.active?"state-circle active":"state-circle"}}).call(M),b.append("text").attr({"text-anchor":"middle",y:5,class:function(t){return t.active?"state-circle-text active":"state-circle-text"}}).text(function(t){return t.name}),k.exit().remove(),g.on("tick",function(){w()}),g.start()};</script>
 <script type="text/javascript">
 
 	function drawStateMachine(definitions, width, height) {
@@ -66,7 +67,7 @@
 
 	RED.nodes.registerType('finite-state-machine',{
 	category: 'function',
-	color: '#a6bbcf',
+	color: '#C7E9C0',
 	defaults: {
 		name: { value: "" },
 		fsmDefinition: { value: JSON.stringify(defaultFsm) },
@@ -75,7 +76,7 @@
 	},
 	inputs:1,
 	outputs:3,
-	icon: "file.png",
+	icon: "function.png",
 	label: function() {
 		return this.name || "finite-state-machine";
 	},
@@ -97,7 +98,7 @@
                 var json = JSON.parse(definitionInput.typedInput('value'));
                 $('#fsm-graph').empty();
                 setTimeout( function() {
-                    drawStateMachine(json, 500, 500);
+                    drawStateMachine(json, "100%", 500);
                 },500)
 			} catch (e) {
 				//do nothing

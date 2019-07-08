@@ -11,7 +11,7 @@
     "test": "mocha tests/index.js",
     "build": "gulp build"
   },
-  "keywords": [ "node-red", "fsm", "statemachine" ],
+  "keywords": [ "node-red", "fsm", "statemachine", "state", "state-machine", "finite-state" ],
   "node-red": {
     "nodes": {
       "finite-state-machine": "dist/finite-state-machine-node.js"

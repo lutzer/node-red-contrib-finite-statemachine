@@ -1,9 +1,10 @@
 <style>
-	svg {
+	#fsm-graph svg {
 		background-color: #efefef;
+		border: 1px solid #cccccc;
 	}
 
-	.state-circle {
+	#fsm-graph .state-circle {
 		fill: #fff;
 		stroke: #000;
 		fill-opacity: 0.2;
@@ -11,32 +12,32 @@
 		cursor: pointer;
 	}
 
-	.state-circle.active {
+	#fsm-graph .state-circle.active {
 		fill-opacity: 1;
 		stroke-opacity: 1;
 	}
 
-	.state-circle-text {
+	#fsm-graph .state-circle-text {
 		fill-opacity: 0.2;
 		cursor: pointer;
 		pointer-events: none;
 	}
 
-	.state-circle-text.active {
+	#fsm-graph .state-circle-text.active {
 		fill-opacity: 1
 	}
 
-	.transition-line {
+	#fsm-graph .transition-line {
 		stroke: #000;
 	}
 
-	.transition-curve {
+	#fsm-graph .transition-curve {
 		stroke: #000;
 		stroke.width: 1;
 		fill: none;
 	}
 
-	.arrow{
+	#fsm-graph .arrow{
 		stroke-width:5;
 		stroke:#000;
 		stroke-dasharray:5, 5;
@@ -66,7 +67,7 @@
 
 	RED.nodes.registerType('finite-state-machine',{
 	category: 'function',
-	color: '#a6bbcf',
+	color: '#C7E9C0',
 	defaults: {
 		name: { value: "" },
 		fsmDefinition: { value: JSON.stringify(defaultFsm) },
@@ -75,7 +76,7 @@
 	},
 	inputs:1,
 	outputs:3,
-	icon: "file.png",
+	icon: "function.png",
 	label: function() {
 		return this.name || "finite-state-machine";
 	},
@@ -97,7 +98,7 @@
                 var json = JSON.parse(definitionInput.typedInput('value'));
                 $('#fsm-graph').empty();
                 setTimeout( function() {
-                    drawStateMachine(json, 500, 500);
+                    drawStateMachine(json, "100%", 500);
                 },500)
 			} catch (e) {
 				//do nothing
