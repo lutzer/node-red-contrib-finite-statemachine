@@ -19,7 +19,7 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 The statemachine is defined by a json object:
 
-- *state* holds the initial state and might contain a data object.
+- *state* holds the initial state. It needs to contain a *status* field and might contain a *data* object.
 - *transitions* holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.
 - sending a msg with the topic set to the transition string to the node will trigger a state change.
 - *reset* is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.

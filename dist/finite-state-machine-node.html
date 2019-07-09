@@ -208,7 +208,7 @@
   }
 }</pre>
 	<ul>
-		<li><i>state</i> holds the initial state and might contain a data object.</li>
+		<li><i>state</i> holds the initial state. It needs to contain a <i>status</i> field and might contain a <i>data</i> object</li>
 		<li><i>transitions</i> holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.</li>
 		<li>sending a msg with the topic set to the transition to the node, will trigger a state change.</li>
 		<li><i>reset</i> is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.</li>
