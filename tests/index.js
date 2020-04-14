@@ -141,7 +141,7 @@ describe('Statemachine Tests', function () {
 			fsm.triggerAction({ type: 'test' });
 			assert.fail();
 		} catch (e) {
-			assert.equal(e.code, 13);
+			assert.equal(e.code, 12);
 		}
 	});
 
