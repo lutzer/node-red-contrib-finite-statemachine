@@ -1,8 +1,20 @@
 /* global d3 */
 /* exported stateMachineGraph */
 
+function parseFsmDefinition(definition) {
+	Object.keys(definition.transitions).forEach((state) => {
+		return Object.keys(definition.transitions[state]).forEach( (transition) => {
+			if (typeof definition.transitions[state][transition] == 'object')
+				definition.transitions[state][transition] = definition.transitions[state][transition].status
+		})
+	})
+	return definition
+}
+
 /* draws a graphical visualisation of the statemachine with d3 */
 var stateMachineGraph = function (definition, canvasWidth, canvasHeight) {
+
+	definition = parseFsmDefinition(definition)
 
     var canvas = d3.select('#fsm-graph');
 

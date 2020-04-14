@@ -12,6 +12,13 @@ class StatemachineError extends Error {
 	}
 }
 
+function parseTransitionEntry(transition) {
+	if (_.isString(transition))
+		return { status : transition, data : {}}
+	else if (_.isObject(transition))
+		return { status : transition.status, data: transition.data || {} }
+}
+
 class StateMachine extends Subject {
 	constructor (options) {
 		super();
@@ -29,6 +36,15 @@ class StateMachine extends Subject {
 		}
 
 		this._initialState = _.extend({ data: {} }, options.state);
+
+		// validate transition table entries
+		_.values(options.transitions).forEach( (stateTransitions) => {
+			_.values(stateTransitions).forEach( (state) => {
+				if (!_.isString(state) && !_.has(state, 'status'))
+					throw new StatemachineError('Transition table has no status field: ' + JSON.stringify(state), 4);
+			})
+		})
+
 		this._transitions = options.transitions;
 
 		// set initial state
@@ -50,23 +66,17 @@ class StateMachine extends Subject {
 		}
 
 		if (!_.has(possibleActions, action.type)) {
-			if (_.includes(this.getAllTransitions(), action.type)) {
-				throw new StatemachineError('transition ' + action.type + ' not possible in the current state.', 12);
-			} else {
-				throw new StatemachineError('transition ' + action.type + ' not definied in transition object.', 13);
-			}
+			throw new StatemachineError('transition not possible from the current state.', 12);
 		}
 
-		let newState = possibleActions[action.type];
 
-        // check if there are additional data arguments supplied
-        if (_.has(action, 'data')) {
-            var data = _.isObject(action.data) ? action.data : {}
-            // set new state
-            this._state = this._state.set('status', newState).mergeDeep({ data: data });
-        } else {
-            this._state = this._state.set('status', newState);
-        }
+		let transition = parseTransitionEntry(possibleActions[action.type])
+
+		// check if there are additional data arguments supplied
+		let data =	Object.assign({}, transition.data, _.isObject(action.data) ? action.data : {})
+				
+		// set new state
+		this._state = this._state.set('status', transition.status).mergeDeep({ data: data });
 		
 		// publish new state
 		this.next(this._state.toJS());

@@ -23,6 +23,25 @@ const createTestMachine = () => {
 	});
 };
 
+const createDataTestMachine = () => {
+	return new StateMachine({
+		state: { status: 'STOPPED', data : { val : 'init'} },
+		transitions: {
+			'STOPPED': {
+				'push': { status: 'RUNNING' },
+				'hit': { status :'BROKEN', data: { val: 'broken', reason: 'hit' } }
+			},
+			'RUNNING': {
+				'pull': 'STOPPED',
+				'hit': 'BROKEN'
+			},
+			'BROKEN': {
+				'fix': { status: 'STOPPED', data : { val : undefined, reason: undefined } }
+			}
+		}
+	});
+}
+
 describe('Statemachine Tests', function () {
 	it('should be able to create a statemachine', () => {
 		let fsm = new StateMachine({
@@ -39,12 +58,38 @@ describe('Statemachine Tests', function () {
 				'INITIAL': {
 					'push': 'RUNNING',
 					'hit': 'BROKEN'
-                }
+        }
 			}
 		});
 
 		let transitions = fsm.getCurrentTransitions();
 		assert(_.isEqual(_.keys(transitions), ['push', 'hit']));
+	});
+
+	it('should throw an error with the wrong transition table', () => {
+		assert.throws( () => {
+			new StateMachine({
+				state: { status: 'INITIAL'},
+				transitions: {
+					'INITIAL': {
+						'push': 2,
+						'hit': 'BROKEN'
+					}
+				}
+			});
+		}, Error)
+
+		assert.throws( () => {
+			new StateMachine({
+				state: { status: 'INITIAL'},
+				transitions: {
+					'INITIAL': {
+						'push': { invalid : 0 },
+						'hit': 'BROKEN'
+					}
+				}
+			});
+		}, Error)
 	});
 
 	it('should be able to transition to a new state', () => {
@@ -121,4 +166,44 @@ describe('Statemachine Tests', function () {
 
 		fsm.triggerAction({ type: 'push' });
 	})
+
+	it('should set data as defined in the transition table', () => {
+		let fsm = createDataTestMachine();
+
+		fsm.triggerAction({ type: 'push' });
+		assert.equal(fsm.getState().data.val, 'init');
+		assert.equal(fsm.getState().status, 'RUNNING');
+
+		fsm.triggerAction({ type: 'pull'})
+		assert.equal(fsm.getState().status, 'STOPPED');
+
+		fsm.triggerAction({ type: 'hit'})
+		assert.equal(fsm.getState().data.val, 'broken');
+		assert.equal(fsm.getState().data.reason, 'hit');
+		assert.equal(fsm.getState().status, 'BROKEN');
+
+		fsm.triggerAction({ type: 'fix'})
+		assert.equal(fsm.getState().data.val, undefined);
+		assert.equal(fsm.getState().data.reason, undefined);
+		assert.equal(fsm.getState().status, 'STOPPED');
+
+	});
+	
+	it('should merge action data with transition table data', () => {
+		let fsm = createDataTestMachine();
+
+		fsm.triggerAction({ type: 'push', data : { test : 'pushData' } });
+		assert.equal(fsm.getState().data.val, 'init');
+		assert.equal(fsm.getState().data.test, 'pushData');
+		assert.equal(fsm.getState().status, 'RUNNING');
+
+		fsm.triggerAction({ type: 'pull'})
+		assert.equal(fsm.getState().status, 'STOPPED');
+
+		fsm.triggerAction({ type: 'hit', data : { val : 'hitData' }})
+		assert.equal(fsm.getState().data.val, 'hitData');
+		assert.equal(fsm.getState().data.reason, 'hit');
+		assert.equal(fsm.getState().status, 'BROKEN');
+
+  });
 });

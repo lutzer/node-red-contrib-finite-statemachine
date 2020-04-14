@@ -98,6 +98,7 @@ Set finite state machine definiton to:
 
 ## Development
 
-* run `npm install`
+* run `npm install` 
 * install grunt `npm install -g grunt-cli`
 * build with `npm run build`
+* create link in node-red installation by navigation to node red dir and run `npm install {path to local repo}`
