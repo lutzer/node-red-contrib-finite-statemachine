@@ -1,18 +1,3 @@
-<style>
-div.shell pre code {
-    background: none;
-    color: #ccc;
-}
-code.node {
-    border-radius: 6px;
-    border: 1px solid #B68181;
-    background: #fff0f0;
-    color: #555;
-    white-space:nowrap;
-}
-</style>
-
-
 # Node Red State Machine
 
 A finite state machine implementation for node red. Displays also a graphical representation of the state machine.
@@ -33,7 +18,7 @@ A finite state machine implementation for node red. Displays also a graphical re
 ## Usage
 
 ### Input object elements
-The inputs of the <code class="node">finite state machine</code> is defined by a JSON object:
+The inputs of the `finite state machine` are defined by a JSON object:
 
 - *state* holds the initial state. It shall contain a *status* field and may contain a *data* object.
 - *transitions* holds the possible states as keys (shown as upper case strings). As values it contains one or more key/value pairs, consisting of the transition string (lower case strings) and the resulting state.
@@ -42,7 +27,7 @@ The inputs of the <code class="node">finite state machine</code> is defined by a
 
 ### Output object elements
 
-The <code class="node">finite state machine</code> contains the following outputs:
+The `finite state machine` contains the following outputs:
 - *changed*: Outputs the new state when there is any valid transition. 
 This may be a transition to a different state or also a transition to the actual state (see example "Simple state machine with data object").
 - *statusChanged*: Outputs the new state only when the state machine transitioned to a different state.
