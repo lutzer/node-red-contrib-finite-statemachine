@@ -4,15 +4,15 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ![node-settings](images/node-settings.png)
 
-## Install in node-RED
+## Install in Node-RED
 
-### In node-RED
+### In Node-RED
 
 * Via Manage Palette -> Search for "node-red-contrib-finite-statemachine"
 
 ### In a shell
 
-* go in node-red install folder, in os x its usually: `~/.node-red`
+* go in Node-RED install folder, in os x its usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
 
 ## Usage
@@ -56,14 +56,14 @@ See example "Simple state machine with data object" for further explanation.
 ```
 
 ### Handling of the *"data"* object
-- The data object in the "state" object is set to the defined value at the first start of the flow (initialization). 
+- The data object in the "state" object is set to the defined value at the first start of the flow (initialization).
 - The contents of the *data* object may be changed or extended by sending a `msg` with a valid transition (within `msg.topic`) containing a JSON object as payload. 
 
 **Note:** Sending a `msg` without a valid transition cannot change the *data* object (see example below).
 
 
 ### Further information
-Check node-REDs info panel to see more information on how to use the state machine.
+Check Node-REDs info panel to see more information on how to use the state machine.
 
 
 ## Example flows
