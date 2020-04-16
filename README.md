@@ -4,13 +4,13 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ![node-settings](images/node-settings.png)
 
-## Install in Node Red
+## Install in node-RED
 
-### In Node-red
+### In node-RED
 
 * Via Manage Palette -> Search for "node-red-contrib-finite-statemachine"
 
-### In Terminal
+### In a shell
 
 * go in node-red install folder, in os x its usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
@@ -22,17 +22,18 @@ The inputs of the `finite state machine` are defined by a JSON object:
 
 - *state* holds the initial state. It shall contain a *status* field and may contain a *data* object.
 - *transitions* holds the possible states as keys (shown as upper case strings). As values it contains one or more key/value pairs, consisting of the transition string (lower case strings) and the resulting state.
-- sending a msg to the node containing a `msg.topic` set to a transition string will trigger a state change.
-- `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state, so *reset* shall not be used in the transition table.
+- sending a `msg` to the node containing a `msg.topic` set to a transition string will trigger a state change.
+- `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state, so *reset* shall not be used as a transition name in the transition table.
 
 ### Output object elements
 
 The `finite state machine` contains the following outputs:
-- *changed*: Outputs the new state when there is any valid transition. 
-This may be a transition to a different state or also a transition to the actual state (see example "Simple state machine with data object").
-- *statusChanged*: Outputs the new state only when the state machine transitioned to a different state.
-- *dataChanged*: Outputs the new state only when the data object is changed.
+- *changed*: Outputs a  `msg` on flow startup when there is any valid transition.
+- The latter is a transition to a different state or also a transition with the actual state in the `msg.topic` field.
+- *statusChanged*: Outputs a `msg` only if the state machine has transitioned to a different state. At flow startup there is no output.
+- *dataChanged*: Outputs a `msg` only if the data object is changed. This also happens in casae of a *reset* transition. At flow startup there is no output.
 
+See example "Simple state machine with data object" for further explanation.
 
 ### Basic structure
 
@@ -62,14 +63,14 @@ This may be a transition to a different state or also a transition to the actual
 
 
 ### Further information
-Check node-reds info panel to see more information on how to use the state machine.
+Check node-REDs info panel to see more information on how to use the state machine.
 
 
 ## Example flows
 
 ### Minimal state machine
 
-This example shows a state machine with two states without any *data*-object. 
+This example shows a state machine with two states without any *data*-object.
 
 There is only one `msg.topic` ("toggleState") which toggles between the two states IDLE and RUNNING.
 
@@ -123,8 +124,8 @@ Set finite state machine definiton to:
 This example gives a state machine with two states (IDLE, RUNNING) and three transitions. Two of them (*run*, *stop*) change between the two states, the third (*set*) is used only to change the *data* object contents in the state RUNNING.
 
 #### Output behaviour
-The difference between the outputs *"any change"* and *"status changed"* can be seen in *state* "RUNNING": In case of a msg with`msg.topic`= "set" the output *"any change"* is activated, output *"status changed"* is not activated.
-The output *"data changed"* can only be activated in state "RUNNING" via the lower two injects: These are able to change the value of the "data" variables and therefore can activate the outputs *"any change"* and *"data changed"* (but not output *"status changed"*).
+The difference between the outputs *"any change"* and *"status changed"* can be seen in *state* "RUNNING": In case of a `msg` with`msg.topic`= "set" the output *"any change"* sends a `msg`, output *"status changed"* does not send a `msg`.
+The output *"data changed"* can only send a `msg` in the state "RUNNING" via the lower two inject nodes: They are able to change the value of the "data" variables and therefore output a `msg` to the outputs *"any change"* and *"data changed"* (but not at output *"status changed"*).
 
 ![flow](images/flow.png)
 
@@ -166,10 +167,10 @@ This example gives a self-stopping behaviour after a defined amount of time: Tra
 
 ### Changing the "data" object
 
-The *data* object can only be changed or extended during a valid transition. I.e. the JSON object contents sent in a `msg` containing no valid transtion within the `msg.topic` does not lead to any *data* object changes.
+The *data* object can only be changed or extended during a valid transition. I.e. the JSON object contents sent in a `msg` containing no valid transition within the `msg.topic` does not lead to any *data* object changes.
 
-Therefore see example "State machine with feedback flow" above: To be able to change the *data* object in the *state* RUNNING, the transition *run* is defined: This transition does not change the *state* but may change the *data* object within *state* RUNNING. The two lower injections can change the *data* object only in the *state* RUNNING. 
-In the example the JSON message of the upper set injection contains:
+Therefore see example "State machine with feedback flow" above: To be able to change the *data* object in the *state* RUNNING, the transition *run* is defined: This transition does not change the *state* but may change the *data* object within *state* RUNNING like the two lower injections do.
+In the example the definition of the upper set injection is like follows:
 
 ![change-data-object](images/change-data-object.png)
 
