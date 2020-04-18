@@ -17,22 +17,20 @@ module.exports = function (RED) {
 		// create new state machine
 		try {
 			nodeContext.machine = new StateMachine(JSON.parse(config.fsmDefinition));
+			node.status({fill: 'green', shape: 'dot', text: 'state: ' + nodeContext.machine.getState().status});
 		} catch (err) {
 			node.error(err, msg);
 			return;
 		}
 		
 		// react to all changes
-		nodeContext.allChangeListener = nodeContext.machine.pipe( distinctUntilChanged() ).subscribe((state) => {
+		nodeContext.allChangeListener = nodeContext.machine.pipe( distinctUntilChanged(_.isEqual) ).subscribe((state) => {
 			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
 			sendOutput({
 				topic: 'state',
 				payload: state
 			}, null, null);
 		});
-		
-		// initialize node status
-		nodeContext.machine.next(nodeContext.machine.getState());
 		
 		// send initial state after 100ms
 		if (config.sendInitialState) {
@@ -53,7 +51,7 @@ module.exports = function (RED) {
 					nodeContext.machine.triggerAction(action);
 				} catch (err) {
 					if (config.showTransitionErrors) {
-						node.error([err.code, err.message], msg);
+						node.error({ code: err.code, msg: err.message}, msg);
 					}
 				}
 			}
