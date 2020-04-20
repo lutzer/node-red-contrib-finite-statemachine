@@ -1,5 +1,5 @@
 const { StateMachine } = require('./statemachine.js');
-const { distinctUntilChanged } = require('rxjs/operators');
+const { distinctUntilChanged, tap } = require('rxjs/operators');
 const _ = require('lodash');
 
 const FSM_NAME = 'finite-state-machine';
@@ -24,7 +24,9 @@ module.exports = function (RED) {
 		}
 		
 		// react to all changes
-		nodeContext.allChangeListener = nodeContext.machine.pipe( distinctUntilChanged(_.isEqual) ).subscribe((state) => {
+		
+		nodeContext.allChangeListener = nodeContext.machine.pipe( 
+			config.sendStateWithoutChange ? tap() : distinctUntilChanged(_.isEqual) ).subscribe((state) => {
 			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
 			sendOutput({
 				topic: 'state',

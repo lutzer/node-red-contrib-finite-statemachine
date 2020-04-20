@@ -1,199 +1,196 @@
 <style>
-	#fsm-graph svg {
-		background-color: #efefef;
-		border: 1px solid #cccccc;
-	}
-
-	#fsm-graph .state-circle {
-		fill: #fff;
-		stroke: #000;
-		fill-opacity: 0.2;
-		stroke-opacity: 0;
-		cursor: pointer;
-	}
-
-	#fsm-graph .state-circle.active {
-		fill-opacity: 1;
-		stroke-opacity: 1;
-	}
-
-	#fsm-graph .state-circle-text {
-		fill-opacity: 0.2;
-		cursor: pointer;
-		pointer-events: none;
-	}
-
-	#fsm-graph .state-circle-text.active {
-		fill-opacity: 1
-	}
-
-	#fsm-graph .transition-line {
-		stroke: #000;
-	}
-
-	#fsm-graph .transition-curve {
-		stroke: #000;
-		stroke.width: 1;
-		fill: none;
-	}
-
-	#fsm-graph .arrow{
-		stroke-width:5;
-		stroke:#000;
-		stroke-dasharray:5, 5;
-	}
+  #fsm-graph svg {
+    background-color: #efefef;
+    border: 1px solid #cccccc;
+  }
+  
+  #fsm-graph .state-circle {
+    fill: #fff;
+    stroke: #000;
+    fill-opacity: 0.2;
+    stroke-opacity: 0;
+    cursor: pointer;
+  }
+  
+  #fsm-graph .state-circle.active {
+    fill-opacity: 1;
+    stroke-opacity: 1;
+  }
+  
+  #fsm-graph .state-circle-text {
+    fill-opacity: 0.2;
+    cursor: pointer;
+    pointer-events: none;
+  }
+  
+  #fsm-graph .state-circle-text.active {
+    fill-opacity: 1
+  }
+  
+  #fsm-graph .transition-line {
+    stroke: #000;
+  }
+  
+  #fsm-graph .transition-curve {
+    stroke: #000;
+    stroke.width: 1;
+    fill: none;
+  }
+  
+  #fsm-graph .arrow{
+    stroke-width:5;
+    stroke:#000;
+    stroke-dasharray:5, 5;
+  }
 </style>
 <script type="text/javascript">function parseFsmDefinition(t){return Object.keys(t.transitions).forEach(e=>Object.keys(t.transitions[e]).forEach(n=>{"object"==typeof t.transitions[e][n]&&(t.transitions[e][n]=t.transitions[e][n].status)})),t}var stateMachineGraph=function(t,e,n){t=parseFsmDefinition(t);var r=d3.select("#fsm-graph");r.selectAll("svg").remove();var a=r.append("svg").attr("height",n).attr("width",e).call(d3.behavior.zoom().on("zoom",function(){a.attr("transform","translate("+d3.event.translate+") scale("+d3.event.scale+")")})).append("g"),s=r.node().getBoundingClientRect(),i=s.width,o=s.height;function c(t,e){return{x:t.x+e.x,y:t.y+e.y}}function u(t,e){return{x:t.x*e,y:t.y*e}}function d(t,e){return c(t,u(e,-1))}function l(t){var e=function(t){return Math.sqrt(t.x*t.x+t.y*t.y)}(t);return 0==e?t:u(t,1/e)}var f=40,x=d3.svg.line().x(function(t){return t.x?t.x:0}).y(function(t){return t.y?t.y:0}).interpolate("basis"),y=Object.keys(t.transitions),v={nodes:y.map(function(t){return{name:t,active:!1}}),transitions:y.map(function(e,n){var r=[];return Object.keys(t.transitions[e]).forEach(function(a,s){var i=y.findIndex(function(n){return n===t.transitions[e][a]});i>-1&&r.push({source:n,target:i,name:a,offset:s})}),r}).flat()};v.nodes.forEach(function(t,e){t.x=i/2+Math.cos(e/v.nodes.length*Math.PI*2)*i/4,t.y=o/2+Math.sin(e/v.nodes.length*Math.PI*2)*o/4}),v.transitions.forEach(function(t){v.nodes[t.source].active=!0,v.nodes[t.target].active=!0});var h=v.transitions;a.append("defs").append("marker").attr({id:"arrow",viewBox:"0 -5 10 10",refX:10,refY:0,markerWidth:10,markerHeight:10,orient:"auto"}).append("path").attr("d","M0,-5L10,0L0,5").attr("class","arrowHead");var p=d3.layout.force().size([i,o]).nodes(v.nodes).links(h).linkDistance(5*f).gravity(.1).charge(-2e3),g=a.selectAll("path.transition-curve").data(v.transitions);g.enter().append("path").attr({class:"transition-curve","marker-end":"url(#arrow)"}),g.exit().remove();var m=a.selectAll("text.transition-labels").data(v.transitions);m.enter().append("text").attr({"text-anchor":"middle",class:"transition-labels"}).text(function(t){return t.name});var k=a.selectAll("g.state-element").data(v.nodes),b=d3.behavior.drag().on("dragstart",function(t,e){p.resume()}).on("drag",function(t){t.x+=d3.event.x,t.y+=d3.event.y,w(),p.resume()}).on("dragend",function(t,e){p.resume()}),M=k.enter().append("g").attr({class:"state-element",transform:function(t){return"translate("+t.x+","+t.y+")"}});function w(){k.attr("transform",function(t){return"translate("+t.x+","+t.y+")"}),g.attr({d:function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*f,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*f,y:t.target.y}:t.target,a=u(c(r,n),.5),s=l({x:r.y-n.y,y:-(r.x-n.x)}),i=c(a,u(s,e?f+50:f+10)),o=d(r,u(l(d(r,i)),f));return x([n,i,o])}}),m.attr("transform",function(t){var e=t.target.index==t.source.index,n=e?{x:t.source.x+.7*f,y:t.source.y}:t.source,r=e?{x:t.target.x-.7*f,y:t.target.y}:t.target,a=u(c(r,n),.5),s=l({x:r.y-n.y,y:-(r.x-n.x)}),i=c(a,u(s,e?f+50:f+10)),o=d(r,n),x=180*Math.atan2(o.y,o.x)/Math.PI;return x=(x=x>90?x-180:x)<-90?x+180:x,"translate("+i.x+","+i.y+") rotate("+x+")"})}M.append("circle").attr({r:f,class:function(t){return t.active?"state-circle active":"state-circle"}}).call(b),M.append("text").attr({"text-anchor":"middle",y:5,class:function(t){return t.active?"state-circle-text active":"state-circle-text"}}).text(function(t){return t.name}),k.exit().remove(),p.on("tick",function(){w()}),p.start()};</script>
 <script type="text/javascript">
-
-	function drawStateMachine(definitions, width, height) {
-		stateMachineGraph(definitions, width, height)
-	}
-
-	var  defaultFsm = { 
-		"state": {
-			"status": "IDLE",
-			"data" : { "x": 5 }
-		},
-		"transitions": {
-			"IDLE": {
-				"run": "RUNNING"
-			},
-			"RUNNING": {
-				"stop": "IDLE"
-			}
-		}
-	}
-
-	RED.nodes.registerType('finite-state-machine',{
-	category: 'function',
-	color: '#C7E9C0',
-	defaults: {
-		name: { value: "" },
-		fsmDefinition: { value: JSON.stringify(defaultFsm) },
-		sendInitialState : { value : false },
-		showTransitionErrors: { value: true }
-	},
-	inputs:1,
-	outputs:1,
-	icon: "function.png",
-	label: function() {
-		return this.name || "finite-state-machine";
-	},
-	inputLabels: "trigger",
-	outputLabels: ["changed", "statusChanged", "dataChanged" ], 
-	oneditprepare: function() {
-
-		// create definiton input field
-		let definitionInput = $("#node-input-fsmDefinition")
-		definitionInput.typedInput({
-					default: 'json',
-					types: ['json'],
-					typeField: $("#node-input-fsmDefinition")
-				});
-		definitionInput.typedInput( 'value', this.fsmDefinition );
-
-		definitionInput.on("change", function(type, value) {
-			try {
-                var json = JSON.parse(definitionInput.typedInput('value'));
-                $('#fsm-graph').empty();
-                setTimeout( function() {
-                    drawStateMachine(json, "100%", 500);
-                },500)
-			} catch (e) {
-				//do nothing
-			}
-		});
-	},
-	oneditsave: function() {
-		return;
-	}
-	});
+  
+  function drawStateMachine(definitions, width, height) {
+    stateMachineGraph(definitions, width, height)
+  }
+  
+  var  defaultFsm = { 
+    "state": {
+      "status": "IDLE",
+      "data" : { "x": 5 }
+    },
+    "transitions": {
+      "IDLE": {
+        "run": "RUNNING"
+      },
+      "RUNNING": {
+        "stop": "IDLE"
+      }
+    }
+  }
+  
+  RED.nodes.registerType('finite-state-machine',{
+    category: 'function',
+    color: '#C7E9C0',
+    defaults: {
+      name: { value: "" },
+      fsmDefinition: { value: JSON.stringify(defaultFsm) },
+      sendInitialState : { value : false },
+      sendStateWithoutChange: { value : false },
+      showTransitionErrors: { value: true }
+    },
+    inputs:1,
+    outputs:1,
+    icon: "function.png",
+    label: function() {
+      return this.name || "finite-state-machine";
+    },
+    inputLabels: "trigger",
+    outputLabels: ["changed", "statusChanged", "dataChanged" ], 
+    oneditprepare: function() {
+      
+      // create definiton input field
+      let definitionInput = $("#node-input-fsmDefinition")
+      definitionInput.typedInput({
+        default: 'json',
+        types: ['json'],
+        typeField: $("#node-input-fsmDefinition")
+      });
+      definitionInput.typedInput( 'value', this.fsmDefinition );
+      
+      definitionInput.on("change", function(type, value) {
+        try {
+          var json = JSON.parse(definitionInput.typedInput('value'));
+          $('#fsm-graph').empty();
+          setTimeout( function() {
+            drawStateMachine(json, "100%", 500);
+          },500)
+        } catch (e) {
+          //do nothing
+        }
+      });
+    },
+    oneditsave: function() {
+      return;
+    }
+  });
 </script>
 
 <script type="text/x-red" data-template-name="finite-state-machine">
-	<div class="form-row">
-	<label for="node-input-name"><i class="icon-tag"></i> Name</label>
-	<input type="text" id="node-input-name" placeholder="Name">
-	</div>
-	<div class="form-row">
-	<label for="node-input-fsmDefinition"><i class="icon-tag"></i> FSM</label>
-	<input type="text" id="node-input-fsmDefinition" placeholder="Name">
-	</div>
-	<div class="form-row">
-	<label>&nbsp;</label>
-	<input type="checkbox" id="node-input-sendInitialState" style="display: inline-block; width: auto; vertical-align: top;">
-	<label for="node-input-sendInitialState" style="width: 70%;">Send initial state</label>
-	</div>
-	<div class="form-row">
-	<label>&nbsp;</label>
-	<input type="checkbox" id="node-input-showTransitionErrors" style="display: inline-block; width: auto; vertical-align: top;">
-	<label for="node-input-showTransitionErrors" style="width: 70%;">Throw transition errors</label>
-	</div>
-	<div class="form-row">
-        <p>left-click: move / right-click: zoom</p>
-		<div id="fsm-graph">
-        </div>
-	</div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-fsmDefinition"><i class="icon-tag"></i> FSM</label>
+    <input type="text" id="node-input-fsmDefinition" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-sendInitialState" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-sendInitialState" style="width: 70%;">Send initial state</label>
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-sendStateWithoutChange" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-sendStateWithoutChange" style="width: 70%;">Always send state change</label>
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-showTransitionErrors" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-showTransitionErrors" style="width: 70%;">Throw transition errors</label>
+  </div>
+  <div class="form-row">
+    <p>left-click: move / right-click: zoom</p>
+    <div id="fsm-graph">
+    </div>
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="finite-state-machine">
-	<p>A finite state machine implementation for node red</p>
-
-	<h3>Properties</h3>
-		<dl class="message-properties">
-			<dt>name<span class="property-type">string</span></dt>
-			<dd>The name of the node as displayed in the editor</dd>
-			<dt>FSM<span class="property-type">json </span></dt>
-			<dd>
-	The json object which descibes the state machine.
-	It needs to contain the initial state and possible transitions.
-	For more information see details below</dd>
-			<dt>Send initial state<span class="property-type">boolean </span></dt>
-			<dd>Enable to trigger sending the intital state after 100ms after the flow is started.</dd>
-			<dt>Show transition errors<span class="property-type">boolean </span></dt>
-			<dd>Enable / disable error msgs when triggering actions.</dd>
-		</dl>
-
-	<h3>Inputs</h3>
-	<dl class="message-properties">
-	<dt>topic <span class="property-type">string</span></dt>
-	<dd>
-		- <i>reset</i> to reset to initial state<br/>
-		- <i>[transition]</i> to trigger a state change<br/>
-	</dd>
-		<dt>payload <span class="property-type">json</span> </dt>
-		<dd>
-			May contain a json payload, to add to the state output Example: <code>{ "x" : 10.0, y: "test" }</code>
-		 </dd>
-	</dl>
-
-	<h3>Outputs</h3>
-	<ol class="node-ports">
-		<p>All outputs output the same data format: a msg, with its payload containing a <i>status</i> and a <i>data</i> object</p>
-		<li>changed
-			<dl class="message-properties">
-				<dt>payload <span class="property-type">json</span></dt>
-				<dd>Outputs the new state when there is any change in state.</dd>
-			</dl>
-        </li>
-        <li>statusChanged
-			<dl class="message-properties">
-				<dt>payload <span class="property-type">json</span></dt>
-				<dd>Outputs the new state only when the machine transitioned to a new status.</dd>
-			</dl>
-        </li>
-        <li>dataChanged
-			<dl class="message-properties">
-				<dt>payload <span class="property-type">json</span></dt>
-				<dd>Outputs the new state only when the data object of the state is changed.</dd>
-			</dl>
-		</li>
-	</ol>
-
-	<h3>Details</h3>
-	<p>Example json code for FSM:
-<pre>{
+  <p>A finite state machine implementation for node red</p>
+  
+  <h3>Properties</h3>
+  <dl class="message-properties">
+    <dt>name<span class="property-type">string</span></dt>
+    <dd>The name of the node as displayed in the editor</dd>
+    <dt>FSM<span class="property-type">json </span></dt>
+    <dd>
+      The json object which descibes the state machine.
+      It needs to contain the initial state and possible transitions.
+      For more information see details below</dd>
+      <dt>Send initial state<span class="property-type">boolean </span></dt>
+      <dd>Enable to trigger sending the intital state after 100ms after the flow is started.</dd>
+      <dt>Always send state change<span class="property-type">boolean </span></dt>
+      <dd>Outputs a message with the current state if a valid transition was received by the node, even if the state remains unchanged.</dd>
+      <dt>Show transition errors<span class="property-type">boolean </span></dt>
+      <dd>Enable / disable error msgs when triggering actions. You can react on them with the <i>catch</i> node.</dd>
+    </dl>
+    
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+      <dt>topic <span class="property-type">string</span></dt>
+      <dd>
+        - <i>reset</i> to reset to initial state<br/>
+        - <i>[transition]</i> to trigger a state change<br/>
+      </dd>
+      <dt>payload <span class="property-type">json</span> </dt>
+      <dd>
+        May contain a json payload, that changes the state's data object: <code>{ "x" : 10.0, y: "test" }</code>
+      </dd>
+    </dl>
+    
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+      <p>Outputs a msg, with its payload containing a <i>status</i> and a <i>data</i> object</p>
+      <li>state
+        <dl class="message-properties">
+          <dt>payload <span class="property-type">json</span></dt>
+          <dd>Outputs the new state when there is any change in status or data object.</dd>
+        </dl>
+      </li>
+    </ol>
+    
+    <h3>Details</h3>
+    <p>Example json code for FSM:
+<pre>
+{
   "state": {
     "status": "IDLE",
     "data" : { "x": 5 }
@@ -206,13 +203,15 @@
       "stop": "IDLE"
     }
   }
-}</pre>
-	<ul>
-		<li><i>state</i> holds the initial state. It needs to contain a <i>status</i> field and might contain a <i>data</i> object</li>
-		<li><i>transitions</i> holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.</li>
-		<li>sending a msg with the topic set to the transition to the node, will trigger a state change.</li>
-		<li><i>reset</i> is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.</li>
-	</ul>
-	</p>
-
-</script>
+}
+</pre>
+      <ul>
+        <li><i>state</i> holds the initial state. It needs to contain a <i>status</i> field and might contain a <i>data</i> object</li>
+        <li><i>transitions</i> holds the possible states as Keys (the upper case strings). As Values it holds one or more Key-Value Pairs, consisting of the transition (lower case strings) and the resulting state.</li>
+        <li>sending a msg with the topic set to the transition to the node, will trigger a state change.</li>
+        <li><i>reset</i> is a reserved transition to reset the machine to its initial state, so it cannot be used in the transition table.</li>
+      </ul>
+    </p>
+    
+  </script>
+  
