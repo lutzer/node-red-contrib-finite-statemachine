@@ -27,13 +27,33 @@ module.exports = function (RED) {
 		
 		nodeContext.allChangeListener = nodeContext.machine.pipe( 
 			config.sendStateWithoutChange ? tap() : distinctUntilChanged(_.isEqual) ).subscribe((state) => {
-			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
-			sendOutput({
+				node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
+				sendOutput({
+					topic: 'state',
+					payload: state
+				}, null, null);
+			});
+			
+		// react to status changes
+		nodeContext.stateChangeListener = nodeContext.machine.pipe(distinctUntilChanged( (prev, curr) => {
+			return prev.status === curr.status;
+		})).subscribe((state) => {
+			sendOutput(null, {
 				topic: 'state',
 				payload: state
-			}, null, null);
+			}, null );
 		});
 		
+		// react to data changes
+		nodeContext.dataChangeListener = nodeContext.machine.pipe(distinctUntilChanged( (prev, curr) => {
+			return _.isEqual(prev.data, curr.data);
+		})).subscribe((state) => {
+			sendOutput(null, null, {
+				topic: 'state',
+				payload: state
+			});
+		});
+			
 		// send initial state after 100ms
 		if (config.sendInitialState) {
 			setTimeout( () => {
@@ -61,11 +81,14 @@ module.exports = function (RED) {
 		
 		node.on('close', function () {
 			nodeContext.stateChangeListener.unsubscribe();
+			nodeContext.dataChangeListener.unsubscribe();
+			nodeContext.allChangeListener.unsubscribe();
 		});
 		
-		function sendOutput(changed = null) {
-			node.send([changed])
+		function sendOutput(changed = null, statusChanged = null, dataChanged = null) {
+				node.send([changed, statusChanged, dataChanged])
 		}
 	}
 	RED.nodes.registerType(FSM_NAME, StateMachineNode);
 };
+	
