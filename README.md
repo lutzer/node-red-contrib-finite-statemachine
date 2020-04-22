@@ -17,15 +17,19 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ## Usage
 
-### Input object elements
+### Node Configuration
+
 The inputs of the `finite state machine` are defined by a JSON object:
 
 - *state* holds the initial state. It shall contain a *status* field and may contain a *data* object.
 - *transitions* holds the possible states as keys (shown as upper case strings). As values it contains one or more key/value pairs, consisting of the transition string (lower case strings) and the resulting state.
+
+### Input
+
 - sending a `msg` to the node containing a `msg.topic` set to a transition string will trigger a state change.
 - `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state, so *reset* shall not be used as a transition name in the transition table.
 
-### Output object elements
+### Output
 
 The `finite state machine` contains the following outputs: 
 
