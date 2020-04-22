@@ -4,7 +4,7 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ![node-settings](images/node-settings.png)
 
-## Install in Node-RED
+## Installation
 
 ### In Node-RED
 
@@ -15,50 +15,45 @@ A finite state machine implementation for node red. Displays also a graphical re
 * go in Node-RED install folder, in os x its usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
 
+
+
 ## Usage
 
 ### Node Configuration
 
-The inputs of the `finite state machine` are defined by a JSON object:
+The statemachine is defined by a JSON Object.
 
 - *state* holds the initial state. It shall contain a *status* field and may contain a *data* object.
 - *transitions* holds the possible states as keys (shown as upper case strings). As values it contains one or more key/value pairs, consisting of the transition string (lower case strings) and the resulting state.
 
-### Input
-
-- sending a `msg` to the node containing a `msg.topic` set to a transition string will trigger a state change.
-- `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state, so *reset* shall not be used as a transition name in the transition table.
-
-### Output
-
-The `finite state machine` contains the following outputs: 
-
-- *changed*: Outputs a  `msg` on flow startup and when there is any valid transition.
-The latter is a transition to a different state or also a transition with the actual state in the `msg.topic` field.
-- *statusChanged*: Outputs a `msg` only if the state machine has transitioned to a different state. At flow startup there is no output.
-- *dataChanged*: Outputs a `msg` only if the data object is changed. This also happens in casae of a *reset* transition. At flow startup there is no output.
-
-See example "Simple state machine with data object" for further explanation.
-
-### Basic structure
-
 ```json
 {
   "state": {
-    "status": "IDLE",
-    "data" : { "x": 5 }
+    "status": "IDLE"
   },
   "transitions": {
     "IDLE": {
       "run": "RUNNING"
     },
     "RUNNING": {
-      "stop": "IDLE",
-      "set": "RUNNING"
+      "stop": "IDLE"
     }
   }
 }
 ```
+
+### Input
+
+The inputs of the  `finite state machine`  are defined by the transition table setup in the nodes configuration.
+
+- sending a `msg` to the node containing a `msg.topic` set to a transition string will trigger a state change.
+- `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state, so *reset* shall not be used as a transition name in the transition table.
+
+### Output
+
+The `finite state machine` has the following outputs:
+
+- state: Outputs a  `msg` whenever the state got changed by a valid transition.
 
 ### Handling of the *"data"* object
 - The data object in the "state" object is set to the defined value at the first start of the flow (initialization).
@@ -69,6 +64,7 @@ See example "Simple state machine with data object" for further explanation.
 
 ### Further information
 Check Node-REDs info panel to see more information on how to use the state machine.
+
 
 
 ## Example flows
@@ -181,6 +177,7 @@ In the example the definition of the upper set injection is like follows:
 ![change-data-object](images/change-data-object.png)
 
 As can seen this changes the present "data" object element "x" to a numerical value of '2' and adds an additional "data" object element "name" with the string "peter".
+
 
 
 ## Development
