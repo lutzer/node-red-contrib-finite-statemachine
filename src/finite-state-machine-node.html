@@ -178,11 +178,23 @@
     
     <h3>Outputs</h3>
     <ol class="node-ports">
-      <p>Outputs a msg, with its payload containing a <i>status</i> and a <i>data</i> object</p>
-      <li>state
+      <p>All outputs output the same data format: a msg, with its payload containing a <i>status</i> and a <i>data</i> object</p>
+      <li>changed
         <dl class="message-properties">
           <dt>payload <span class="property-type">json</span></dt>
-          <dd>Outputs the new state when there is any change in status or data object.</dd>
+          <dd>Outputs the new state when there is any change in state.</dd>
+        </dl>
+          </li>
+          <li>statusChanged
+        <dl class="message-properties">
+          <dt>payload <span class="property-type">json</span></dt>
+          <dd>Outputs the new state only when the machine transitioned to a new status.</dd>
+        </dl>
+          </li>
+          <li>dataChanged
+        <dl class="message-properties">
+          <dt>payload <span class="property-type">json</span></dt>
+          <dd>Outputs the new state only when the data object of the state is changed.</dd>
         </dl>
       </li>
     </ol>
