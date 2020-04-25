@@ -12,7 +12,7 @@ A finite state machine implementation for node red. Displays also a graphical re
 
 ### In a shell
 
-* go in Node-RED install folder, in os x its usually: `~/.node-red`
+* go to the Node-RED installation folder, in OS X its usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
 
 ## Usage
