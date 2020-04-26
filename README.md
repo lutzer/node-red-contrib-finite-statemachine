@@ -123,7 +123,7 @@ The input topics of the  `finite state machine`  are defined by the transition t
 <a name="output"></a>
 ### Output
 
-The output of `finite state machine` sends a  `msg` whenever there is a valid transition. 
+The output of `finite state machine` sends a  `msg` whenever there is a valid transition.
 Remark: This also may be a valid transition without any state change.
 
 The output contains:
