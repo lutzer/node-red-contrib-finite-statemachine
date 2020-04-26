@@ -1,13 +1,3 @@
- xxx ToDos v1
-- Alle Screenshots neu machen (wg. 1 Ausgang) und alte Images löschen
-- Alle Exports neu machen
-
-Inhaltsverzeichnis final prüfen 
-
-
-xxx suchen
-
-
 
 # Node Red State Machine
 A finite state machine (FSM) implementation for node red. Displays also a graphical representation of the state machine.
@@ -84,7 +74,7 @@ The statemachine of `finite state machine` is defined by a JSON object within th
     }
   }
 }
-``` 
+```
 Fig. 3: Basic FSM structure definition (only with transitions)
 
 
@@ -307,7 +297,19 @@ As can seen this changes the present "data" object element "x" to a numerical va
 
 <a name="hints_for_upgrading"></a>
 ## Hints for upgrading from node versions 0.2.11 and earlier to version 1.x.x
-Kleines Beispiel mit rbe-Node zum Herausfiltern und als Hinweis für die Umsteiger von 0.2.11 auf 1.x.x, um mit den bisherigen Ausgängen kompatibel zu bleiben
+The `finite state machine` node of earlier versions contained three different outputs. In the actual node there is only one output present. Typically only this one output is needed.
+If one needs to have the other two output functions there is the possibility of "emulating" them via the node `rbe` (*Report by Exception* node). This node is able to filter the output in a manner that the old additional two outputs are present.
+
+![compatibility mode](images/flow-with-rbe.png)
+Fig. 15: Flow with `rbe` node generating compatible outputs
+
+As an example the `rbe`node *stateChanged* may be configured like shown in Fig. 16.
+
+![compatibility mode](images/rbe-configuration.png)
+Fig. 16: Configuration of the `rbe` node
 
 
-Fig. xxx: State machine with rbe evaluation
+```json
+[{"id":"cd27ad32.fb2ce8","type":"tab","label":"State machine with rbe","disabled":false,"info":""},{"id":"741f9b7e.bd3d34","type":"finite-state-machine","z":"cd27ad32.fb2ce8","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"toggle\":\"RUNNING\",\"set\":\"IDLE\"},\"RUNNING\":{\"toggle\":\"IDLE\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":300,"wires":[["2c5a6aeb.c6e35e","22380426.fd5b5c","fd0fdc38.21c4c8","19579af6.c76055"]]},{"id":"6f9447ed.5d58","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"{ \"x\" :6 }","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":340,"wires":[["741f9b7e.bd3d34"]]},{"id":"3e18afe6.ce355","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"{ \"x\" :7 }","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":380,"wires":[["741f9b7e.bd3d34"]]},{"id":"d8ffa74c.efa948","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"toggle","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":250,"y":300,"wires":[["741f9b7e.bd3d34"]]},{"id":"8ee732f2.01075","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":930,"y":280,"wires":[]},{"id":"2c5a6aeb.c6e35e","type":"rbe","z":"cd27ad32.fb2ce8","name":"dataChanged","func":"rbei","gap":"","start":"","inout":"out","property":"payload.data","x":720,"y":280,"wires":[["8ee732f2.01075"]]},{"id":"22380426.fd5b5c","type":"rbe","z":"cd27ad32.fb2ce8","name":"stateChanged","func":"rbei","gap":"","start":"","inout":"out","property":"payload.status","x":720,"y":340,"wires":[["6abdae73.1aaac"]]},{"id":"6abdae73.1aaac","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":930,"y":340,"wires":[]},{"id":"2d6a156e.5f98ca","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":250,"y":260,"wires":[["741f9b7e.bd3d34"]]},{"id":"fd0fdc38.21c4c8","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":730,"y":200,"wires":[]},{"id":"19579af6.c76055","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":730,"y":140,"wires":[]}]
+```
+Fig. 17: Compatible outputs flow
