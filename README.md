@@ -1,7 +1,4 @@
  xxx ToDos v1
-- Schritt 1: Doku Inputs und Outputs zuerst machen
-- Beispiele: Zuerst in Node-RED, dann hier die Doku der Beispiele
--- Beispiel mit rbe-Nodes in eigenem Abschnitt anstatt section "Output behaviour"
 - Alle Screenshots neu machen (wg. 1 Ausgang) und alte Images löschen
 - Alle Exports neu machen
 
@@ -24,16 +21,16 @@ Fig. 1: Node appearance
 2. [Usage](#usage)
     2.1 [Node configuration](#node_conifguration)
     2.1.1 [Basic FSM structure](#basic_fsm_structure)
-    2.1.2 [Optional *data* object](#optional_data_object)
+    2.1.2 [Optional data object](#optional_data_object)
     2.2 [Input](#input)
     2.3 [Output](#output)
-    2.4 [Handling of the *data* object](#handling_of_the_data_object)
+    2.4 [Handling of the data object](#handling_of_the_data_object)
     2.5 [Further information](#further_information)
 3. [Example flows](#example_flows)
 	3.1 [Minimal state machine](#minimal_state_machine)
 	3.2 [Simple state machine with data object](#simple_state_machine_with_data_object)
 	3.3 [State machine with feedback](#state_machine_with_feedback)
-	3.4 [Changing the *data* object](#changing_the_data_object)
+	3.4 [Changing the data object](#changing_the_data_object)
 4. [Development](#development)
 5. [Hints for upgrading from earlier versions](#hints_for_upgrading)
 
@@ -74,18 +71,18 @@ The statemachine of `finite state machine` is defined by a JSON object within th
 
 ```json
 {
-    "state": {
-        "status": "IDLE"
+  "state": {
+    "status": "IDLE"
+  },
+  "transitions": {
+    "IDLE": {
+      "run": "RUNNING"
     },
-    "transitions": {
-        "IDLE": {
-            "run": "RUNNING"
-        },
-        "RUNNING": {
-            "stop": "IDLE",
-            "set": "RUNNING"
-        }
+    "RUNNING": {
+      "stop": "IDLE",
+      "set": "RUNNING"
     }
+  }
 }
 ``` 
 Fig. 3: Basic FSM structure definition (only with transitions)
@@ -100,24 +97,24 @@ Fig. 4 shows *data* definition portions within the *state* object and in transit
 
 ```json
 "state": {
-    "status": "IDLE",
-    "data": {
-        "x": 99
-    }
+  "status": "IDLE",
+  "data": {
+    "x": 99
+  }
 }
 ```
 
 ```json
 "transitions": {
-    "RUNNING": {
-        "stop": {
-            "status": "IDLE",
-            "data": {
-                "x": 0
-            }
-        },
-        "set": "RUNNING"
-    }
+  "RUNNING": {
+    "stop": {
+      "status": "IDLE",
+      "data": {
+        "x": 0
+      }
+    },
+    "set": "RUNNING"
+  }
 }
 ```
 Fig. 4: *data* object portions
@@ -171,23 +168,23 @@ There is only one `msg.topic` ("toggleState") which toggles between the two stat
 
 ```json
 {
-   "state": {
-     "status": "IDLE"
-   },
-   "transitions": {
-     "IDLE": {
-       "toggleState": "RUNNING"
-     },
-     "RUNNING": {
-       "toggleState": "IDLE"
-     }
+  "state": {
+    "status": "IDLE"
+  },
+  "transitions": {
+    "IDLE": {
+      "toggleState": "RUNNING"
+    },
+    "RUNNING": {
+      "toggleState": "IDLE"
+    }
   }
 }
 ```
 Fig. 5: Minimal state machine JSON object
 
 
-![flow-simple](images/flow-minimal.png)
+![flow-minimal](images/flow-minimal.png)
 Fig. 6: Minimal state machine
 
 
@@ -206,36 +203,45 @@ Set finite state machine definiton to:
 {
   "state": {
     "status": "IDLE",
-    "data" : { "x": 5 }
+    "data": {
+      "x": 99
+    }
   },
   "transitions": {
     "IDLE": {
-      "run": "RUNNING"
+      "run": {
+        "status": "RUNNING",
+        "data": {
+          "x": 42
+        }
+      }
     },
     "RUNNING": {
-      "stop": "IDLE",
+      "stop": {
+        "status": "IDLE",
+        "data": {
+          "x": 0
+        }
+      },
       "set": "RUNNING"
     }
   }
 }
 ```
-Fig. xxx: Simple state machine JSON object
+Fig. 8: Simple state machine JSON object
 
 #### State description
-This example gives a state machine with two states (IDLE, RUNNING) and three transitions. Two of them (*run*, *stop*) change between the two states, the third (*set*) is used only to change the *data* object contents in the state RUNNING.
+This example gives a state machine with two states (IDLE, RUNNING) and three transitions. Two of them (*run*, *stop*) change between the two states, the third (*set*) is used only to externally change the *data* object contents in the state RUNNING via an input `msg` with an appropriate `msg.topic` = "set".
 
-#### Output behaviour
-The difference between the outputs *"any change"* and *"status changed"* can be seen in *state* "RUNNING": In case of a `msg` with`msg.topic`= "set" the output *"any change"* sends a `msg`, output *"status changed"* does not send a `msg`.
-The output *"data changed"* can only send a `msg` in the state "RUNNING" via the lower two inject nodes: They are able to change the value of the "data" variables and therefore output a `msg` to the outputs *"any change"* and *"data changed"* (but not at output *"status changed"*).
 
-![flow](images/flow.png)
-Fig. xxx: Simple state machine
+![flow-simple](images/flow.png)
+Fig. 9: Simple state machine
 
 
 ```json
-[{"id":"378a3460.e755fc","type":"tab","label":"Simple state machine with data object","disabled":false,"info":""},{"id":"67adcdd8.8b41d4","type":"finite-state-machine","z":"378a3460.e755fc","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"run\":\"RUNNING\"},\"RUNNING\":{\"stop\":\"IDLE\",\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":600,"y":260,"wires":[["1a35a82.2e59ad8"],["324d3672.55ac32"],["b85f26d6.b8f418"]]},{"id":"1a35a82.2e59ad8","type":"debug","z":"378a3460.e755fc","name":"any change","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":830,"y":220,"wires":[]},{"id":"c882ea0f.8236e","type":"inject","z":"378a3460.e755fc","name":"","topic":"reset","payload":"","payloadType":"str","repeat":"","crontab":"","once":true,"onceDelay":0.1,"x":210,"y":120,"wires":[["67adcdd8.8b41d4"]]},{"id":"4117af3.0c6505","type":"comment","z":"378a3460.e755fc","name":"sending topic \"reset\" will set the state machine to its initial state","info":"","x":380,"y":80,"wires":[]},{"id":"324d3672.55ac32","type":"debug","z":"378a3460.e755fc","name":"status change","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":840,"y":260,"wires":[]},{"id":"b85f26d6.b8f418","type":"debug","z":"378a3460.e755fc","name":"\"data\" change","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":840,"y":300,"wires":[]},{"id":"976ee3eb.97e4f","type":"inject","z":"378a3460.e755fc","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":240,"wires":[["67adcdd8.8b41d4"]]},{"id":"7ae46f5b.127bc8","type":"inject","z":"378a3460.e755fc","name":"","topic":"set","payload":"{\"x\" : 2, \"name\" : \"peter\"}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":280,"y":400,"wires":[["67adcdd8.8b41d4"]]},{"id":"4fa32a8f.24719c","type":"inject","z":"378a3460.e755fc","name":"","topic":"set","payload":"{\"y\" : 3}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":440,"wires":[["67adcdd8.8b41d4"]]},{"id":"1622d35c.3a4f1d","type":"comment","z":"378a3460.e755fc","name":"any other topic will trigger a transition","info":"","x":290,"y":200,"wires":[]},{"id":"1196d485.ba7693","type":"inject","z":"378a3460.e755fc","name":"","topic":"stop","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":280,"wires":[["67adcdd8.8b41d4"]]},{"id":"1e02858b.9b841a","type":"comment","z":"378a3460.e755fc","name":"by sending a JSON object as payload you can add data to the state","info":"","x":380,"y":360,"wires":[]}]
+[{"id":"70d12b2e.625c9c","type":"tab","label":"Simple state machine with data object","disabled":false,"info":""},{"id":"a0edf135.e14588","type":"finite-state-machine","z":"70d12b2e.625c9c","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":99}},\"transitions\":{\"IDLE\":{\"run\":{\"status\":\"RUNNING\",\"data\":{\"x\":42}}},\"RUNNING\":{\"stop\":{\"status\":\"IDLE\",\"data\":{\"x\":0}},\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":600,"y":260,"wires":[["cb19a198.11647","b1877454.ee2168"]]},{"id":"9befd239.ea94b","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"reset","payload":"","payloadType":"str","repeat":"","crontab":"","once":true,"onceDelay":0.1,"x":210,"y":120,"wires":[["a0edf135.e14588"]]},{"id":"456671ae.4a071","type":"comment","z":"70d12b2e.625c9c","name":"sending topic \"reset\" will set the state machine to its initial state","info":"","x":380,"y":80,"wires":[]},{"id":"bcc44c08.7c6d08","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":240,"wires":[["a0edf135.e14588"]]},{"id":"201e40f8.865b2","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"set","payload":"{\"x\" : 2, \"name\" : \"peter\"}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":290,"y":400,"wires":[["a0edf135.e14588"]]},{"id":"61fd9c83.dd95fc","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"set","payload":"{\"y\" : 3}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":440,"wires":[["a0edf135.e14588"]]},{"id":"c6add2b4.c41ee","type":"comment","z":"70d12b2e.625c9c","name":"any other topic will trigger a transition","info":"","x":290,"y":200,"wires":[]},{"id":"a4c93b9f.44d3f","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"stop","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":280,"wires":[["a0edf135.e14588"]]},{"id":"3b5f9a43.cdf68e","type":"comment","z":"70d12b2e.625c9c","name":"by sending a JSON object as payload you can add data to the state","info":"","x":380,"y":360,"wires":[]},{"id":"cb19a198.11647","type":"debug","z":"70d12b2e.625c9c","name":"","active":true,"tosidebar":false,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":880,"y":220,"wires":[]},{"id":"b1877454.ee2168","type":"debug","z":"70d12b2e.625c9c","name":"","active":true,"tosidebar":false,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":880,"y":300,"wires":[]}]
 ```
-Fig. xxx: Simple state machine flow
+Fig. 10: Simple state machine flow
 
 
 <a name="state_machine_with_feedback"></a>
@@ -258,32 +264,33 @@ Set finite state machine definiton to:
   }
 }
 ```
-Fig. xxx: State machine with feedback JSON object
+Fig. 11: State machine with feedback JSON object
 
 This example gives a self-stopping behaviour after a defined amount of time: Transition *run* triggers the state machine to *state* RUNNING, the feedback loop activates the transition *stop* after a delay of 5 seconds so that the state machine changes back to *state* IDLE.
 
-![](images/flow-feedback.png)
-Fig. xxx: State machine with feedback
+![flow-with-feeback](images/flow-feedback.png)
+Fig. 12: State machine with feedback
 
 
 ```json
-[{"id":"e7cbb08b.ea53","type":"tab","label":"State machine with feedback flow","disabled":false,"info":""},{"id":"b4a9f9f7.51a2a8","type":"finite-state-machine","z":"e7cbb08b.ea53","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"run\":\"RUNNING\"},\"RUNNING\":{\"stop\":\"IDLE\",\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":160,"wires":[["d6bb83dc.a1bad8"],[],[]]},{"id":"8c71a3b6.8311d","type":"inject","z":"e7cbb08b.ea53","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":270,"y":160,"wires":[["b4a9f9f7.51a2a8"]]},{"id":"d6bb83dc.a1bad8","type":"switch","z":"e7cbb08b.ea53","name":"onRUNNING","property":"payload.status","propertyType":"msg","rules":[{"t":"eq","v":"RUNNING","vt":"str"}],"checkall":"true","repair":false,"outputs":1,"x":690,"y":140,"wires":[["d3e923f3.8d2478"]]},{"id":"d3e923f3.8d2478","type":"delay","z":"e7cbb08b.ea53","name":"delay 5s","pauseType":"delay","timeout":"5","timeoutUnits":"seconds","rate":"1","nbRateUnits":"1","rateUnits":"second","randomFirst":"1","randomLast":"5","randomUnits":"seconds","drop":false,"x":760,"y":300,"wires":[["d1f104bf.095cf8"]]},{"id":"d1f104bf.095cf8","type":"change","z":"e7cbb08b.ea53","name":"set msg.topic to stop","rules":[{"t":"set","p":"topic","pt":"msg","to":"stop","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":220,"y":200,"wires":[["b4a9f9f7.51a2a8"]]},{"id":"d90fb97c.0299d8","type":"comment","z":"e7cbb08b.ea53","name":"sending topic \"run\" will trigger the machine which is stopped 5 seconds later","info":"","x":390,"y":100,"wires":[]}]
+[{"id":"854a9f95.2f9f7","type":"tab","label":"State machine with feedback flow","disabled":false,"info":""},{"id":"47aa9b50.b6825c","type":"finite-state-machine","z":"854a9f95.2f9f7","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"run\":\"RUNNING\"},\"RUNNING\":{\"stop\":\"IDLE\",\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":160,"wires":[["a8262434.cf7498"]]},{"id":"87fbee09.255fe8","type":"inject","z":"854a9f95.2f9f7","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":270,"y":160,"wires":[["47aa9b50.b6825c"]]},{"id":"a8262434.cf7498","type":"switch","z":"854a9f95.2f9f7","name":"onRUNNING","property":"payload.status","propertyType":"msg","rules":[{"t":"eq","v":"RUNNING","vt":"str"}],"checkall":"true","repair":false,"outputs":1,"x":690,"y":140,"wires":[["1bb1822b.773f76"]]},{"id":"1bb1822b.773f76","type":"delay","z":"854a9f95.2f9f7","name":"delay 5s","pauseType":"delay","timeout":"5","timeoutUnits":"seconds","rate":"1","nbRateUnits":"1","rateUnits":"second","randomFirst":"1","randomLast":"5","randomUnits":"seconds","drop":false,"x":760,"y":300,"wires":[["983f9b74.7bcbd8"]]},{"id":"983f9b74.7bcbd8","type":"change","z":"854a9f95.2f9f7","name":"set msg.topic to stop","rules":[{"t":"set","p":"topic","pt":"msg","to":"stop","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":220,"y":200,"wires":[["47aa9b50.b6825c"]]},{"id":"a0a931fb.60bc4","type":"comment","z":"854a9f95.2f9f7","name":"sending topic \"run\" will trigger the machine which is stopped 5 seconds later","info":"","x":390,"y":100,"wires":[]}]
 ```
-Fig. xxx: State machine with feedback flow
+Fig. 13: State machine with feedback flow
 
 
 
 <a name="changing_the_data_object"></a>
 ### Changing the "data" object
 
-# xxx möglicherweise hier gar nicht mehr notwenig
+During a valid transition the *data* object can be changed or extended via the nodes input (externally) or changed via the node transition definition (internally).
 
-The *data* object can only be changed or extended during a valid transition. I.e. the JSON object contents sent in a `msg` containing no valid transition within the `msg.topic` does not lead to any *data* object changes.
+Sending a `msg` containing no valid transition within the `msg.topic` cannot lead to any *data* object changes.
 
-Therefore see example "State machine with feedback flow" above: To be able to change the *data* object in the *state* RUNNING, the transition *run* is defined: This transition does not change the *state* but may change the *data* object within *state* RUNNING like the two lower injections do.
+Therefore see example "Simple state machine with data object" above: To be able to change the *data* object externally in the *state* RUNNING, the transition *set* is defined: This (valid) transition does not change the *state* but may change the *data* object within *state* RUNNING like the two lower injections do.
 In the example the definition of the upper set injection is like follows:
 
 ![change-data-object](images/change-data-object.png)
+Fig. 14: Properties of a `msg`with a JSON *data* object
 
 As can seen this changes the present "data" object element "x" to a numerical value of '2' and adds an additional "data" object element "name" with the string "peter".
 
