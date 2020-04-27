@@ -10,8 +10,6 @@ A finite state machine (FSM) implementation for node red. Displays also a graphi
 	1.2 [In a shell](#installation_in_a_shell)  
 2. [Usage](#usage)  
     2.1 [Node configuration](#node_conifguration)  
-    2.1.1 [Basic FSM structure](#basic_fsm_structure)  
-    2.1.2 [Optional data object](#optional_data_object)  
     2.2 [Input](#input)  
     2.3 [Output](#output)  
     2.4 [Handling of the data object](#handling_of_the_data_object)  
