@@ -1,0 +1,37 @@
+v1.0.0
+(2020-04-30)
+
+Changes / Improvements / Optimisations:
+- Ouputs | Changed from 3 to 1 output. See documentation if you used the 2nd or 3rd output before how to get the same function with an rbe node.
+- Node behaviour "data object" | Added new functionality so that the "data" object can be set within a state of the statemachine (via definition of the transition table). Up to now, the "data" object could only be modified via a JSON message at the input.
+
+Bug Fixes:
+- System | Resolved an issue were the chosen CPU governor was not applied correctly. Many thanks to @bbsixzz for reporting the issue and @Joulinar for providing the solution: https://github.com/MichaIng/DietPi/issues/3299
+
+Known/Outstanding Issues:
+- None |
+
+For all additional issues that may appear after release, please see the following link for active tickets:
+    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues
+
+-----------------------------------------------------------------------------------------------------------
+
+v0.2.11
+(2020-04-22)
+
+Changes / Improvements / Optimisations:
+- Documentation | Improved documentation with more examples and Node-RED code export snippets.
+
+
+v0.2.10
+(2019-07-09)
+
+Changes / Improvements / Optimisations:
+- Node properties | Improved transition graph: Automatic visualisation adjust to different window sizes.
+
+
+v0.2.09
+(2019-07-07)
+
+Changes / Improvements / Optimisations:
+- Documentation | Node usage description added
