@@ -2,7 +2,7 @@ v1.0.0
 (2020-04-30)
 
 Changes / Improvements / Optimisations:
-- Ouputs | Changed from 3 to 1 output. See documentation if you used the 2nd or 3rd output before how to get the same function with an rbe node.
+- Ouputs | Changed from 3 to 1 output. See documentation if you used the 2nd or 3rd output before how to get the same function with an rbe node. Additionally added option to always send state.
 - Node behaviour "data object" | Added new functionality so that the "data" object can be set within a state of the statemachine (via definition of the transition table). Up to now, the "data" object could only be modified via a JSON message at the input.
 
 Bug Fixes:
