@@ -10,24 +10,22 @@ module.exports = function (RED) {
 		
 		var node = this;
 		var nodeContext = this.context();
-		
-		// init
-		node.status({fill: 'red', shape: 'ring', text: 'no valid definitions'});
+
+		console.log(config)
 		
 		// create new state machine
 		try {
 			nodeContext.machine = new StateMachine(JSON.parse(config.fsmDefinition));
-			node.status({fill: 'green', shape: 'dot', text: 'state: ' + nodeContext.machine.getState().status});
+			setNodeStatus(nodeContext.machine.getState().status)
 		} catch (err) {
-			node.error(err, msg);
+			node.status({fill: 'red', shape: 'ring', text: 'no valid definitions'});
 			return;
 		}
 		
 		// react to all changes
-		
 		nodeContext.allChangeListener = nodeContext.machine.pipe( 
-			config.sendStateWithoutChange ? tap() : distinctUntilChanged(_.isEqual) ).subscribe((state) => {
-			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state.status});
+			config.sendStateWithoutChange ? tap() : distinctUntilChanged( ({state}) => _.isEqual(state)) ).subscribe(({state}) => {
+			setNodeStatus(state.status)
 			sendOutput({
 				topic: 'state',
 				payload: state
@@ -65,6 +63,10 @@ module.exports = function (RED) {
 		
 		function sendOutput(changed = null) {
 			node.send([changed])
+		}
+
+		function setNodeStatus(state) {
+			node.status({fill: 'green', shape: 'dot', text: 'state: ' + state});
 		}
 	}
 	RED.nodes.registerType(FSM_NAME, StateMachineNode);

@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const assert = require('assert');
-const { StateMachine } = require('./../src/statemachine.js');
+const { StateMachine } = require('../src/statemachine.js');
 
 const createTestMachine = () => {
 	return new StateMachine({
@@ -159,7 +159,7 @@ describe('Statemachine Tests', function () {
 	it('should be able to subscribe to state change', (done) => {
 		let fsm = createTestMachine();
 
-		fsm.subscribe( (state) => {
+		fsm.observable.subscribe( ({state}) => {
 			assert.equal(state.status, "RUNNING");
 			done();
 		})

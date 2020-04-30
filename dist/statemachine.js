@@ -19,9 +19,12 @@ function parseTransitionEntry(transition) {
 		return { status : transition.status, data: transition.data || {} }
 }
 
-class StateMachine extends Subject {
+class StateMachine {
+
+	subject = null
+
 	constructor (options) {
-		super();
+		this.subject = new Subject()
 
 		if (!_.isObject(options.state)) {
 			throw new StatemachineError('No inital state specified.', 1);
@@ -51,7 +54,7 @@ class StateMachine extends Subject {
 		this._state = fromJS( this._initialState );
 
 		// publish initial state
-		this.next(this._state.toJS());
+		this.subject.next({ state: this._state.toJS() });
 	}
 
 	triggerAction (action) {
@@ -79,7 +82,7 @@ class StateMachine extends Subject {
 		this._state = this._state.set('status', transition.status).mergeDeep({ data: data });
 		
 		// publish new state
-		this.next(this._state.toJS());
+		this.subject.next({ state: this._state.toJS(), action: action });
 	}
 
 	getCurrentTransitions () {
@@ -98,11 +101,15 @@ class StateMachine extends Subject {
 
 	reset () {
 		this._state = fromJS(this._initialState);
-		this.next(this._state.toJS());
+		this.subject.next(this._state.toJS());
 	}
 
 	getState () {
 		return this._state.toJS();
+	}
+
+	subscribe (...args) {
+		return this.subject.subscribe(...args)
 	}
 };
 
