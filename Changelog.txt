@@ -22,6 +22,7 @@ v0.2.11
 Changes / Improvements / Optimisations:
 - Documentation | Improved documentation with more examples and Node-RED code export snippets.
 
+-----------------------------------------------------------------------------------------------------------
 
 v0.2.10
 (2019-07-09)
@@ -29,9 +30,12 @@ v0.2.10
 Changes / Improvements / Optimisations:
 - Node properties | Improved transition graph: Automatic visualisation adjust to different window sizes.
 
+-----------------------------------------------------------------------------------------------------------
 
 v0.2.09
 (2019-07-07)
 
 Changes / Improvements / Optimisations:
 - Documentation | Node usage description added
+
+-----------------------------------------------------------------------------------------------------------
