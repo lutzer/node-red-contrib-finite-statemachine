@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { fromJS } = require('immutable');
 const { Subject } = require('rxjs');
+const { publish, share } = require("rxjs/operators");
 
 class StatemachineError extends Error {
 	constructor (msg, errorCode = '0') {
@@ -108,8 +109,8 @@ class StateMachine {
 		return this._state.toJS();
 	}
 
-	subscribe (...args) {
-		return this.subject.subscribe(...args)
+	get observable () {
+		return this.subject.pipe(share())
 	}
 };
 

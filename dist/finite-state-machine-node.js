@@ -11,7 +11,6 @@ module.exports = function (RED) {
 		var node = this;
 		var nodeContext = this.context();
 
-		console.log(config)
 		
 		// create new state machine
 		try {
@@ -19,23 +18,28 @@ module.exports = function (RED) {
 			setNodeStatus(nodeContext.machine.getState().status)
 		} catch (err) {
 			node.status({fill: 'red', shape: 'ring', text: 'no valid definitions'});
+			node.warn('no valid definitions')
 			return;
 		}
 		
 		// react to all changes
-		nodeContext.allChangeListener = nodeContext.machine.pipe( 
-			config.sendStateWithoutChange ? tap() : distinctUntilChanged( ({state}) => _.isEqual(state)) ).subscribe(({state}) => {
-			setNodeStatus(state.status)
-			sendOutput({
-				topic: 'state',
-				payload: state
-			}, null, null);
+		nodeContext.allChangeListener = nodeContext.machine.observable.pipe( 
+			config.sendStateWithoutChange ? tap() : distinctUntilChanged( (curr,prev) => _.isEqual(curr.state, prev.state)) )
+			.subscribe(({state}) => {
+				setNodeStatus(state.status)
+				sendOutput({
+					topic: 'state',
+					payload: state
+				});
 		});
 		
 		// send initial state after 100ms
 		if (config.sendInitialState) {
 			setTimeout( () => {
-				nodeContext.machine.next(nodeContext.machine.getState());
+				sendOutput({
+					topic: 'state',
+					payload: nodeContext.machine.getState()
+				});
 			},100);
 		}
 		
@@ -61,8 +65,8 @@ module.exports = function (RED) {
 			nodeContext.stateChangeListener.unsubscribe();
 		});
 		
-		function sendOutput(changed = null) {
-			node.send([changed])
+		function sendOutput(state = null) {
+			node.send([state])
 		}
 
 		function setNodeStatus(state) {
