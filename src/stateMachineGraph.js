@@ -11,15 +11,38 @@ function parseFsmDefinition(definition) {
 	return definition
 }
 
+// VECTOR OPERATIONS
+function vectorAdd (v1, v2) {
+	return { x: v1.x + v2.x, y: v1.y + v2.y };
+}
+
+function vectorMultiply (v1, s) {
+	return { x: v1.x * s, y: v1.y * s };
+}
+
+function vectorLength (v1) {
+	return Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+}
+
+function vectorSubtract (v1, v2) {
+	return vectorAdd(v1, vectorMultiply(v2, -1));
+}
+
+function vectorNormalize (v1) {
+	var length = vectorLength(v1)
+	if (length == 0)
+		return v1;
+	else
+		return vectorMultiply(v1, 1 / length);
+}
+
 /* draws a graphical visualisation of the statemachine with d3 */
 var stateMachineGraph = function (definition, canvasWidth, canvasHeight) {
 
-	definition = parseFsmDefinition(definition)
+	var canvas = d3.select('#fsm-graph');
 
-    var canvas = d3.select('#fsm-graph');
-
-    // clear canvas
-    canvas.selectAll('svg').remove();
+	// clear canvas
+	canvas.selectAll('svg').remove();
 
 	// create svg canvas
     var svg = canvas.append('svg')
@@ -33,29 +56,10 @@ var stateMachineGraph = function (definition, canvasWidth, canvasHeight) {
 	var width = size.width;
 	var height = size.height;
 
-	// VECTOR OPERATIONS
-	function vectorAdd (v1, v2) {
-		return { x: v1.x + v2.x, y: v1.y + v2.y };
-	}
-
-	function vectorMultiply (v1, s) {
-		return { x: v1.x * s, y: v1.y * s };
-	}
-
-	function vectorLength (v1) {
-		return Math.sqrt(v1.x * v1.x + v1.y * v1.y);
-	}
-
-	function vectorSubtract (v1, v2) {
-		return vectorAdd(v1, vectorMultiply(v2, -1));
-	}
-
-	function vectorNormalize (v1) {
-		var length = vectorLength(v1)
-		if (length == 0)
-			return v1;
-		else
-			return vectorMultiply(v1, 1 / length);
+	try {
+		definition = parseFsmDefinition(definition)
+	} catch (e) {
+		return
 	}
 
 	var CIRCLE_RADIUS = 40;

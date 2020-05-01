@@ -70,7 +70,20 @@
     color: '#C7E9C0',
     defaults: {
       name: { value: "" },
-      fsmDefinition: { value: JSON.stringify(defaultFsm) },
+      fsmDefinition: { 
+        value: JSON.stringify(defaultFsm), 
+        validate: function(v) {
+          try {
+            let definitions = JSON.parse(v)
+            return definitions.hasOwnProperty('state') 
+              && definitions.hasOwnProperty('transitions') 
+              && definitions.state.hasOwnProperty('status')
+              && typeof definitions.transitions == 'object'
+          } catch (e) {
+            return false
+          }
+        } 
+      },
       sendInitialState : { value : false },
       sendStateWithoutChange: { value : false },
       showTransitionErrors: { value: true }
