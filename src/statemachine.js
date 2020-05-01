@@ -102,7 +102,7 @@ class StateMachine {
 
 	reset () {
 		this._state = fromJS(this._initialState);
-		this.subject.next(this._state.toJS());
+		this.subject.next({ state: this._state.toJS(), action: 'reset' });
 	}
 
 	getState () {

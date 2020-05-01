@@ -136,6 +136,34 @@ describe('Node Tests', function () {
     let msg = await listen(out,'input')
     assert(msg.payload.status == 'RUNNING')
   });
+
+  it('should reset to inital state on transition:reset', async function() {
+
+    var flow = [
+        { 
+          id: 'statemachine', 
+          type: 'finite-state-machine', 
+          fsmDefinition: JSON.stringify(definitions),
+          sendInitialState:false, 
+          sendStateWithoutChange:false,
+          showTransitionErrors:true,
+          wires: [['out']]
+        },
+        { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    n.receive({ topic: 'push'})
+    let msg = await listen(out,'input')
+    assert(msg.payload.status == 'RUNNING')
+
+    n.receive({ topic: 'reset'})
+    msg = await listen(out,'input')
+    assert(msg.payload.status == 'STOPPED')
+  });
   
   it('msg should change data object of statemachine', async function() {
 
