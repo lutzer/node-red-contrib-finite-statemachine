@@ -17,7 +17,7 @@ A finite state machine (FSM) implementation for node red. Displays also a graphi
 
 ## Usage
 
-You can find detailed usage information in the [Usage Manual](MANUAL.md).
+You can find detailed usage information in the [Usage Manual](https://github.com/lutzer/node-red-contrib-finite-statemachine/blob/master/MANUAL.md).
 
 ### Node Configuration
 ![node-settings](images/node-settings.png)
@@ -27,7 +27,7 @@ The statemachine of `finite state machine` is defined by a JSON object within th
 
 - *state* holds the initial state. It shall contain a *status* field.
 - *transitions* holds the possible states as keys (shown as upper case strings). As values it contains one or more key/value pairs, consisting of the transition string (lower case strings) and the resulting state.
-- additional *data* fields are optional. (See [Usage Manual](MANUAL.md))
+- additional *data* fields are optional. (See [Usage Manual](https://github.com/lutzer/node-red-contrib-finite-statemachine/blob/master/MANUAL.md))
 
 ```json
 {
@@ -59,7 +59,7 @@ Remark: This also may be a valid transition without any state change.
 
 The output contains:
 - *status*: Outputs the state of the FSM.
-- *data*: Outputs the *data* object of the FSM. Read more about the data object in the [Usage Manual](MANUAL.md).
+- *data*: Outputs the *data* object of the FSM. Read more about the data object in the [Usage Manual](https://github.com/lutzer/node-red-contrib-finite-statemachine/blob/master/MANUAL.md).
 
 
 ### Further information
@@ -68,7 +68,7 @@ Check Node-REDs info panel to see more information on how to configure the state
 
 ## Example
 
-For more examples, read the [Usage Manual](MANUAL.md).
+For more examples, read the [Usage Manual](https://github.com/lutzer/node-red-contrib-finite-statemachine/blob/master/MANUAL.md).
 
 ### Minimal state machine
 
