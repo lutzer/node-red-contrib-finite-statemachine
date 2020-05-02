@@ -1,3 +1,32 @@
+v1.0.2
+(2020-05-02)
+
+Changes / Improvements / Optimisations:
+- None.
+
+Bug Fixes:
+- Documentation | Changed link to README.md. Fixes broken link on https://flows.nodered.org/node/node-red-contrib-finite-statemachine.
+
+Known/Outstanding Issues:
+- None.
+
+For all additional issues that may appear after release, please see the following link for active tickets:
+    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues.
+
+-----------------------------------------------------------------------------------------------------------
+
+v1.0.1
+(2020-05-01)
+
+Changes / Improvements / Optimisations:
+- Node behaviour | Added validation function for fsm definitons.
+- Documentation | README.md divided into README.md and MANUAL.md to have a better quick overview in README.md.
+
+Bug Fixes:
+- Reset topic | Bugfix: On reset initial state was not set correctly.
+
+-----------------------------------------------------------------------------------------------------------
+
 v1.0.0
 (2020-04-30)
 
@@ -6,13 +35,13 @@ Changes / Improvements / Optimisations:
 - Node behaviour "data object" | Added new functionality so that the "data" object can be set within a state of the statemachine (via definition of the transition table). Up to now, the "data" object could only be modified via a JSON message at the input.
 
 Bug Fixes:
-- System | Resolved an issue were the chosen CPU governor was not applied correctly. Many thanks to @bbsixzz for reporting the issue and @Joulinar for providing the solution: https://github.com/MichaIng/DietPi/issues/3299
+- System | Resolved an issue were the chosen CPU governor was not applied correctly. Many thanks to @bbsixzz for reporting the issue and @Joulinar for providing the solution: https://github.com/MichaIng/DietPi/issues/3299.
 
 Known/Outstanding Issues:
-- None |
+- None.
 
 For all additional issues that may appear after release, please see the following link for active tickets:
-    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues
+    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues.
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -36,6 +65,6 @@ v0.2.09
 (2019-07-07)
 
 Changes / Improvements / Optimisations:
-- Documentation | Node usage description added
+- Documentation | Node usage description added.
 
 -----------------------------------------------------------------------------------------------------------
