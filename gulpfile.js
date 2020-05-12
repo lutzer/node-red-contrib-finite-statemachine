@@ -1,7 +1,9 @@
 const gulp = require('gulp');
 const path = require('path');
-const mergeStream = require('merge-stream');
+const htmlmin = require('gulp-htmlmin');
 var inlinesource = require('gulp-inline-source');
+var minifyInline = require('gulp-minify-inline');
+const minify = require('gulp-minify');
 
 const paths = {
 	src: path.join(__dirname, 'src'),
@@ -10,18 +12,25 @@ const paths = {
 	copyFiles: [path.join(__dirname, 'src/statemachine.js'), path.join(__dirname, 'src/finite-state-machine-node.js')]
 };
 
-gulp.task('copy', function () {
-	var jsStream = gulp.src(paths.copyFiles)
-		.pipe(gulp.dest(paths.build));
-	return mergeStream(jsStream);
-});
-
-gulp.task('build:html', function () {
+function buildHtml() {
 	return gulp.src(paths.nodeHtml)
 	.pipe(inlinesource({compress: 'true'}))
+	.pipe(htmlmin({ collapseWhitespace: false, minifyCSS: true, minifyJS: true }))
+	.pipe(minifyInline())
 	.pipe(gulp.dest(paths.build));
-});
+}
+
+function buildJs() {
+	return gulp.src(paths.copyFiles)
+	.pipe(minify({
+		noSource: true,
+		ext: {
+			min: '.js'
+		}
+	}))
+	.pipe(gulp.dest(paths.build));
+}
 
 
-gulp.task('build', gulp.series('copy', 'build:html'));
+gulp.task('build', gulp.series(buildJs, buildHtml));
 

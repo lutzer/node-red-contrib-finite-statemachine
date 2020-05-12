@@ -22,7 +22,7 @@ function parseTransitionEntry(transition) {
 
 class StateMachine {
 
-	subject = null
+	//subject = null
 
 	constructor (options) {
 		this.subject = new Subject()
