@@ -13,8 +13,6 @@ A finite state machine (FSM) implementation for node red. Displays also a graphi
 * go to the Node-RED installation folder, in OS X it's usually: `~/.node-red`
 * run `npm install node-red-contrib-finite-statemachine`
 
-## Manual
-
 ## Usage
 
 You can find detailed usage information in the [Usage Manual](https://github.com/lutzer/node-red-contrib-finite-statemachine/blob/master/MANUAL.md).
