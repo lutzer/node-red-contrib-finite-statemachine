@@ -1,8 +1,9 @@
 {
   "name": "node-red-contrib-finite-statemachine",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A finite state machine implementation for node red.",
   "author": "Lutz Reiter",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lutzer/node-red-contrib-finite-statemachine.git"
@@ -37,6 +38,6 @@
     "merge-stream": "^1.0.1",
     "mocha": "^5.2.0",
     "node-red": "^1.0.6",
-    "node-red-node-test-helper": "^0.2.3",
+    "node-red-node-test-helper": "^0.2.3"
   }
 }
