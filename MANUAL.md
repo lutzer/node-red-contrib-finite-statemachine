@@ -171,17 +171,9 @@ There is only one `msg.topic` ("toggleState") which toggles between the two stat
 
 
 ![flow-minimal](images/flow-minimal.png)  
+[**MinimalStateMachineFlow.json**](examples/MinimalStateMachineFlow.json)  
 
 **Fig. 5:** Minimal state machine
-
-<details>
-  <summary>Click to expand code snippet for the <em><b>example flow</b></em>.</summary>
-
-```javascript
-[{"id":"70d24837.fa7bb8","type":"finite-state-machine","z":"9b6215d1.9ceba8","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\"},\"transitions\":{\"IDLE\":{\"toggleState\":\"RUNNING\"},\"RUNNING\":{\"toggleState\":\"IDLE\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":240,"wires":[["236d8d.5ef6da74"]]},{"id":"236d8d.5ef6da74","type":"debug","z":"9b6215d1.9ceba8","name":"","active":true,"tosidebar":false,"console":false,"tostatus":true,"complete":"payload","targetType":"msg","x":720,"y":240,"wires":[]},{"id":"701f2b41.e4ecb4","type":"inject","z":"9b6215d1.9ceba8","name":"","topic":"toggleState","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":250,"y":240,"wires":[["70d24837.fa7bb8"]]},{"id":"a75e8c2f.0b2378","type":"comment","z":"9b6215d1.9ceba8","name":"sending topic \"toggleState\" toggles between the two states","info":"","x":420,"y":180,"wires":[]}]
-```
-</details>
-
 
 
 <a name="simple_state_machine_with_data_object"></a>
@@ -225,17 +217,9 @@ This example gives a state machine with two states (IDLE, RUNNING) and three tra
 
 
 ![flow-simple](images/flow.png)  
+[**SimpleStateMachineFlow.json**](examples/SimpleStateMachineFlow.json)  
 
 **Fig. 7:** Simple state machine
-
-<details>
-  <summary>Click to expand code snippet for the <em><b>example flow</b></em>.</summary>
-
-```javascript
-[{"id":"70d12b2e.625c9c","type":"tab","label":"Simple state machine with data object","disabled":false,"info":""},{"id":"a0edf135.e14588","type":"finite-state-machine","z":"70d12b2e.625c9c","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":99}},\"transitions\":{\"IDLE\":{\"run\":{\"status\":\"RUNNING\",\"data\":{\"x\":42}}},\"RUNNING\":{\"stop\":{\"status\":\"IDLE\",\"data\":{\"x\":0}},\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":600,"y":260,"wires":[["cb19a198.11647","b1877454.ee2168"]]},{"id":"9befd239.ea94b","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"reset","payload":"","payloadType":"str","repeat":"","crontab":"","once":true,"onceDelay":0.1,"x":210,"y":120,"wires":[["a0edf135.e14588"]]},{"id":"456671ae.4a071","type":"comment","z":"70d12b2e.625c9c","name":"sending topic \"reset\" will set the state machine to its initial state","info":"","x":380,"y":80,"wires":[]},{"id":"bcc44c08.7c6d08","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":240,"wires":[["a0edf135.e14588"]]},{"id":"201e40f8.865b2","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"set","payload":"{\"x\" : 2, \"name\" : \"peter\"}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":290,"y":400,"wires":[["a0edf135.e14588"]]},{"id":"61fd9c83.dd95fc","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"set","payload":"{\"y\" : 3}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":440,"wires":[["a0edf135.e14588"]]},{"id":"c6add2b4.c41ee","type":"comment","z":"70d12b2e.625c9c","name":"any other topic will trigger a transition","info":"","x":290,"y":200,"wires":[]},{"id":"a4c93b9f.44d3f","type":"inject","z":"70d12b2e.625c9c","name":"","topic":"stop","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":210,"y":280,"wires":[["a0edf135.e14588"]]},{"id":"3b5f9a43.cdf68e","type":"comment","z":"70d12b2e.625c9c","name":"by sending a JSON object as payload you can add data to the state","info":"","x":380,"y":360,"wires":[]},{"id":"cb19a198.11647","type":"debug","z":"70d12b2e.625c9c","name":"","active":true,"tosidebar":false,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":880,"y":220,"wires":[]},{"id":"b1877454.ee2168","type":"debug","z":"70d12b2e.625c9c","name":"","active":true,"tosidebar":false,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":880,"y":300,"wires":[]}]
-```
-</details>
-
 
 
 <a name="state_machine_with_feedback"></a>
@@ -263,17 +247,9 @@ Set finite state machine definiton to:
 This example gives a self-stopping behaviour after a defined amount of time: Transition *run* triggers the state machine to *state* RUNNING, the feedback loop activates the transition *stop* after a delay of 5 seconds so that the state machine changes back to *state* IDLE.
 
 ![flow-with-feeback](images/flow-feedback.png)  
+[**FeedbackStateMachineFlow.json**](examples/FeedbackStateMachineFlow.json)  
 
 **Fig. 9:** State machine with feedback
-
-<details>
-  <summary>Click to expand code snippet for the <em><b>example flow</b></em>.</summary>
-
-```javascript
-[{"id":"854a9f95.2f9f7","type":"tab","label":"State machine with feedback flow","disabled":false,"info":""},{"id":"47aa9b50.b6825c","type":"finite-state-machine","z":"854a9f95.2f9f7","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"run\":\"RUNNING\"},\"RUNNING\":{\"stop\":\"IDLE\",\"set\":\"RUNNING\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":160,"wires":[["a8262434.cf7498"]]},{"id":"87fbee09.255fe8","type":"inject","z":"854a9f95.2f9f7","name":"","topic":"run","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":270,"y":160,"wires":[["47aa9b50.b6825c"]]},{"id":"a8262434.cf7498","type":"switch","z":"854a9f95.2f9f7","name":"onRUNNING","property":"payload.status","propertyType":"msg","rules":[{"t":"eq","v":"RUNNING","vt":"str"}],"checkall":"true","repair":false,"outputs":1,"x":690,"y":140,"wires":[["1bb1822b.773f76"]]},{"id":"1bb1822b.773f76","type":"delay","z":"854a9f95.2f9f7","name":"delay 5s","pauseType":"delay","timeout":"5","timeoutUnits":"seconds","rate":"1","nbRateUnits":"1","rateUnits":"second","randomFirst":"1","randomLast":"5","randomUnits":"seconds","drop":false,"x":760,"y":300,"wires":[["983f9b74.7bcbd8"]]},{"id":"983f9b74.7bcbd8","type":"change","z":"854a9f95.2f9f7","name":"set msg.topic to stop","rules":[{"t":"set","p":"topic","pt":"msg","to":"stop","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":220,"y":200,"wires":[["47aa9b50.b6825c"]]},{"id":"a0a931fb.60bc4","type":"comment","z":"854a9f95.2f9f7","name":"sending topic \"run\" will trigger the machine which is stopped 5 seconds later","info":"","x":390,"y":100,"wires":[]}]
-```
-</details>
-
 
 
 <a name="changing_the_data_object"></a>
@@ -308,18 +284,9 @@ The `finite state machine` node of earlier versions contained three different ou
 If one needs to have the other two output functions there is the possibility of "emulating" them via the node `rbe` (*Report by Exception* node). This node is able to filter the output in a manner that the old additional two outputs are present.
 
 ![compatibility mode](images/flow-with-rbe.png)  
+[**CompatibleOutputsFlow.json**](examples/CompatibleOutputsFlow.json)  
 
 **Fig. 11:** Flow with `rbe` node generating compatible outputs
-
-<details>
-  <summary>Click to expand code snippet for the <em><b>example flow</b></em>.</summary>
-
-```javascript
-[{"id":"cd27ad32.fb2ce8","type":"tab","label":"State machine with rbe","disabled":false,"info":""},{"id":"741f9b7e.bd3d34","type":"finite-state-machine","z":"cd27ad32.fb2ce8","name":"","fsmDefinition":"{\"state\":{\"status\":\"IDLE\",\"data\":{\"x\":5}},\"transitions\":{\"IDLE\":{\"toggle\":\"RUNNING\",\"set\":\"IDLE\"},\"RUNNING\":{\"toggle\":\"IDLE\"}}}","sendInitialState":false,"showTransitionErrors":true,"x":480,"y":300,"wires":[["2c5a6aeb.c6e35e","22380426.fd5b5c","fd0fdc38.21c4c8","19579af6.c76055"]]},{"id":"6f9447ed.5d58","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"{ \"x\" :6 }","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":340,"wires":[["741f9b7e.bd3d34"]]},{"id":"3e18afe6.ce355","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"{ \"x\" :7 }","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":230,"y":380,"wires":[["741f9b7e.bd3d34"]]},{"id":"d8ffa74c.efa948","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"toggle","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":250,"y":300,"wires":[["741f9b7e.bd3d34"]]},{"id":"8ee732f2.01075","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":930,"y":280,"wires":[]},{"id":"2c5a6aeb.c6e35e","type":"rbe","z":"cd27ad32.fb2ce8","name":"dataChanged","func":"rbei","gap":"","start":"","inout":"out","property":"payload.data","x":720,"y":280,"wires":[["8ee732f2.01075"]]},{"id":"22380426.fd5b5c","type":"rbe","z":"cd27ad32.fb2ce8","name":"stateChanged","func":"rbei","gap":"","start":"","inout":"out","property":"payload.status","x":720,"y":340,"wires":[["6abdae73.1aaac"]]},{"id":"6abdae73.1aaac","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":930,"y":340,"wires":[]},{"id":"2d6a156e.5f98ca","type":"inject","z":"cd27ad32.fb2ce8","name":"","topic":"set","payload":"","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":250,"y":260,"wires":[["741f9b7e.bd3d34"]]},{"id":"fd0fdc38.21c4c8","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.status","targetType":"msg","x":730,"y":200,"wires":[]},{"id":"19579af6.c76055","type":"debug","z":"cd27ad32.fb2ce8","name":"","active":false,"tosidebar":true,"console":false,"tostatus":true,"complete":"payload.data","targetType":"msg","x":730,"y":140,"wires":[]}]
-```
-</details>
-<br>
-
 
 As an example the `rbe`node *stateChanged* may be configured like shown in Fig. 16.
 
