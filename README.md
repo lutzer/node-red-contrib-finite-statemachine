@@ -49,6 +49,7 @@ The input topics of the  `finite state machine`  are defined by the transition t
 
 - sending a `msg` to the node containing a `msg.topic` set to a defined transition string triggers a state change.
 - `msg.topic`= *reset* is a reserved transition to reset the machine to its initial state (*"state"*), therefore *reset* shall not be used as a transition name in the transition table.
+- `msg.topic`= *sync* is used to set the state manualy. its payload needs to be a json object, containing a *status* field. sync should not be used in the transition table
 
 ### Output
 

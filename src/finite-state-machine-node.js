@@ -46,6 +46,12 @@ module.exports = function (RED) {
 		node.on('input', function (msg) {
 			if (msg.topic === 'reset') {
 				nodeContext.machine.reset();
+			} else if (msg.topic === 'sync') {
+				try {
+					nodeContext.machine.setState(msg.payload);
+				} catch (err) {
+					node.error({ code: err.code, msg: err.message}, msg);
+				}
 			} else {
 				var action = {
 					type: msg.topic,

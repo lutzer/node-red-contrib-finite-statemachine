@@ -292,4 +292,29 @@ describe('Node Tests', function () {
     assert(msg === undefined)
   });
 
+  it('should be able to sync the state', async function() {
+
+    var flow = [
+      { 
+        id: 'statemachine', 
+        type: 'finite-state-machine', 
+        fsmDefinition: JSON.stringify(definitions),
+        sendInitialState:false, 
+        sendStateWithoutChange:false,
+        showTransitionErrors:true,
+        wires: [['out']]
+      },
+      { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    n.receive({ topic: 'sync', payload: { status: 'RUNNING'} })
+
+    let msg = await listen(out,'input')
+    assert(msg.payload.status == 'RUNNING')
+  });
+
 })

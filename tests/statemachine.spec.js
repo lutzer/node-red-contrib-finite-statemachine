@@ -205,5 +205,34 @@ describe('Statemachine Tests', function () {
 		assert.equal(fsm.getState().data.reason, 'hit');
 		assert.equal(fsm.getState().status, 'BROKEN');
 
-  });
+	});
+	
+	it('setState() should be able to set the state manualy', () => {
+		let fsm = createDataTestMachine();
+
+		fsm.setState({ status: 'RUNNING'})
+		assert.equal(fsm.getState().status, 'RUNNING')
+	});
+	
+	it('setState() should throw an error if set to a not existing state', () => {
+		let fsm = createTestMachine();
+
+		try {
+			fsm.setState({ status: 'WALKING'})
+			assert.fail();
+		} catch (e) {
+			assert.equal(e.code, 5);
+		}
+	});
+
+	it('setState() should throw an error if there is no status property', () => {
+		let fsm = createTestMachine();
+
+		try {
+			fsm.setState({ foo: 'WALKING'})
+			assert.fail();
+		} catch (e) {
+			assert.equal(e.code, 4);
+		}
+	});
 });

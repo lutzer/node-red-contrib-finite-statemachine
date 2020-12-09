@@ -83,7 +83,7 @@ class StateMachine {
 		this._state = this._state.set('status', transition.status).mergeDeep({ data: data });
 		
 		// publish new state
-		this.subject.next({ state: this._state.toJS(), action: action });
+		this.subject.next({ state: this._state.toJS() });
 	}
 
 	getCurrentTransitions () {
@@ -107,6 +107,15 @@ class StateMachine {
 
 	getState () {
 		return this._state.toJS();
+	}
+
+	setState (state) {
+		if (!_.has(state, 'status'))
+			throw new StatemachineError('the state needs to contain a status field', 4);
+		if (!_.has(this._transitions, state.status))
+			throw new StatemachineError('status does not exist in transition table', 5);
+		this._state = fromJS(state)
+		this.subject.next({ state: this._state.toJS() });
 	}
 
 	get observable () {
