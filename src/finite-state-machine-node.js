@@ -25,11 +25,12 @@ module.exports = function (RED) {
 		// react to all changes
 		nodeContext.allChangeListener = nodeContext.machine.observable.pipe( 
 			config.sendStateWithoutChange ? tap() : distinctUntilChanged( (curr,prev) => _.isEqual(curr.state, prev.state)) )
-			.subscribe(({state}) => {
+			.subscribe(({state, trigger}) => {
 				setNodeStatus(state.status)
 				sendOutput({
 					topic: 'state',
-					payload: state
+					payload: state,
+					trigger: trigger
 				});
 		});
 		
@@ -44,25 +45,29 @@ module.exports = function (RED) {
 		}
 		
 		node.on('input', function (msg) {
-			if (msg.topic === 'reset') {
+			if (msg.control === 'reset') {
 				nodeContext.machine.reset();
-			} else if (msg.topic === 'sync') {
+				return;
+			} else if (msg.control === 'sync') {
 				try {
 					nodeContext.machine.setState(msg.payload);
 				} catch (err) {
 					node.error({ code: err.code, msg: err.message}, msg);
 				}
-			} else {
-				var action = {
-					type: msg.topic,
-					data : _.isObject(msg.payload) ? msg.payload : {}
-				}
-				try {
-					nodeContext.machine.triggerAction(action);
-				} catch (err) {
-					if (config.showTransitionErrors) {
-						node.error({ code: err.code, msg: err.message}, msg);
-					}
+				return;
+			} else if (msg.control === 'query') {
+				nodeContext.machine.queryState()
+			}
+			
+			var action = {
+				type: msg.topic,
+				data : _.isObject(msg.payload) ? msg.payload : {}
+			}
+			try {
+				nodeContext.machine.triggerAction(action, msg);
+			} catch (err) {
+				if (config.showTransitionErrors) {
+					node.error({ code: err.code, msg: err.message}, msg);
 				}
 			}
 		});

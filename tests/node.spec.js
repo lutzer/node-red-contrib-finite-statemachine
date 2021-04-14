@@ -137,7 +137,7 @@ describe('Node Tests', function () {
     assert(msg.payload.status == 'RUNNING')
   });
 
-  it('should reset to inital state on transition:reset', async function() {
+  it('should reset to inital state on control:reset', async function() {
 
     var flow = [
         { 
@@ -160,7 +160,7 @@ describe('Node Tests', function () {
     let msg = await listen(out,'input')
     assert(msg.payload.status == 'RUNNING')
 
-    n.receive({ topic: 'reset'})
+    n.receive({ control: 'reset'})
     msg = await listen(out,'input')
     assert(msg.payload.status == 'STOPPED')
   });
@@ -292,7 +292,7 @@ describe('Node Tests', function () {
     assert(msg === undefined)
   });
 
-  it('should be able to sync the state', async function() {
+  it('should be able to sync the state on control:sync', async function() {
 
     var flow = [
       { 
@@ -311,10 +311,89 @@ describe('Node Tests', function () {
     var n = helper.getNode('statemachine');
     var out = helper.getNode('out');
 
-    n.receive({ topic: 'sync', payload: { status: 'RUNNING'} })
+    n.receive({ control: 'sync', payload: { status: 'RUNNING'} })
 
     let msg = await listen(out,'input')
     assert(msg.payload.status == 'RUNNING')
+  });
+
+  it('should be able to query the state on control:query', async function() {
+
+    var flow = [
+      { 
+        id: 'statemachine', 
+        type: 'finite-state-machine', 
+        fsmDefinition: JSON.stringify(definitions),
+        sendInitialState:false, 
+        sendStateWithoutChange:false,
+        showTransitionErrors:true,
+        wires: [['out']]
+      },
+      { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    n.receive({ control: 'query' })
+
+    let msg = await listen(out,'input')
+    assert(msg.payload.status == "STOPPED" )
+  });
+
+  it('should pass original message through when triggering a transition', async function() {
+
+    var flow = [
+      { 
+        id: 'statemachine', 
+        type: 'finite-state-machine', 
+        fsmDefinition: JSON.stringify(definitions),
+        sendInitialState:false, 
+        sendStateWithoutChange:false,
+        showTransitionErrors:true,
+        wires: [['out']]
+      },
+      { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    const randVal = Math.random()
+    n.receive({ topic: 'push', someValue: randVal })
+
+    let msg = await listen(out,'input')
+
+    assert(msg.payload.status == "RUNNING")
+    assert(msg.trigger.someValue == randVal)
+  });
+
+  it('should accept wrong transition and dont do anything', async function() {
+
+    var flow = [
+      { 
+        id: 'statemachine', 
+        type: 'finite-state-machine', 
+        fsmDefinition: JSON.stringify(definitions),
+        sendInitialState:false, 
+        sendStateWithoutChange:false,
+        showTransitionErrors:true,
+        wires: [['out']]
+      },
+      { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    const randVal = Math.random()
+    n.receive({ topic: 'invalidtransition'})
+
+    msg = await Promise.race([listen(out,'input'), timeout(200)])
+    assert(msg === undefined)
   });
 
 })

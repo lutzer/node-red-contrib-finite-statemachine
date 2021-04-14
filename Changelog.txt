@@ -1,3 +1,48 @@
+v1.1.0
+(2020-09-03)
+
+Changes / Improvements / Optimisations:
+- Examples moved to subdir. Moving example flows to the example subdir gives the option to import them via the import function.
+
+Bug Fixes:
+- None.
+
+Known/Outstanding Issues:
+- None.
+
+For all additional issues that may appear after release, please see the following link for active tickets:
+    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues.
+
+-----------------------------------------------------------------------------------------------------------
+
+v1.0.4
+(2020-06-08)
+
+Changes / Improvements / Optimisations:
+- Add licencse information.
+
+Bug Fixes:
+- None.
+
+Known/Outstanding Issues:
+- None.
+
+-----------------------------------------------------------------------------------------------------------
+
+v1.0.3
+(2020-05-12)
+
+Changes / Improvements / Optimisations:
+- Removed usage of class properties and minified dist files.
+
+Bug Fixes:
+- None.
+
+Known/Outstanding Issues:
+- None.
+
+-----------------------------------------------------------------------------------------------------------
+
 v1.0.2
 (2020-05-02)
 
@@ -10,11 +55,7 @@ Bug Fixes:
 Known/Outstanding Issues:
 - None.
 
-For all additional issues that may appear after release, please see the following link for active tickets:
-    https://github.com/lutzer/node-red-contrib-finite-statemachine/issues.
-
 -----------------------------------------------------------------------------------------------------------
-
 v1.0.1
 (2020-05-01)
 

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { fromJS } = require('immutable');
 const { Subject } = require('rxjs');
-const { publish, share } = require("rxjs/operators");
+const { share } = require("rxjs/operators");
 
 class StatemachineError extends Error {
 	constructor (msg, errorCode = '0') {
@@ -58,7 +58,7 @@ class StateMachine {
 		this.subject.next({ state: this._state.toJS() });
 	}
 
-	triggerAction (action) {
+	triggerAction (action, msg) {
 		if (!_.isString(action.type)) {
 			throw new StatemachineError('action must contain a type.', 14);
 		}
@@ -83,7 +83,7 @@ class StateMachine {
 		this._state = this._state.set('status', transition.status).mergeDeep({ data: data });
 		
 		// publish new state
-		this.subject.next({ state: this._state.toJS() });
+		this.subject.next({ state: this._state.toJS(), trigger: msg});
 	}
 
 	getCurrentTransitions () {
@@ -103,6 +103,11 @@ class StateMachine {
 	reset () {
 		this._state = fromJS(this._initialState);
 		this.subject.next({ state: this._state.toJS(), action: 'reset' });
+	}
+
+
+	queryState () {
+		this.subject.next({ state: this._state.toJS() });
 	}
 
 	getState () {

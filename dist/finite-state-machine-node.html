@@ -57,13 +57,17 @@
     <dl class="message-properties">
       <dt>topic <span class="property-type">string</span></dt>
       <dd>
-        - <i>reset</i> to reset to initial state<br/>
-        - <i>sync</i> to set the state manualy. payload needs to be a json object, containing a <i>status</i> field<br/>
         - <i>[transition]</i> to trigger a state change<br/>
       </dd>
       <dt>payload <span class="property-type">json</span> </dt>
       <dd>
         May contain a json payload, that changes the state's data object: <code>{ "x" : 10.0, y: "test" }</code>
+      </dd>
+      <dt>control <span class="property-type">string</span></dt>
+      <dd>
+        - <i>reset</i> to reset to initial state<br/>
+        - <i>sync</i> to set the state manualy. payload needs to be a json object, containing a <i>status</i> field<br/>
+        - <i>query</i> to query a reading of the current state. "Always send state change" option needs to be enabled.<br/>
       </dd>
     </dl>
     
@@ -74,6 +78,8 @@
         <dl class="message-properties">
           <dt>payload <span class="property-type">json</span></dt>
           <dd>Outputs the new state when there is any change in status or data object.</dd>
+          <dt>trigger <span class="property-type">json</span></dt>
+          <dd>Contains the original message that triggerd the transition.</dd>
         </dl>
       </li>
     </ol>
