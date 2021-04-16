@@ -49,8 +49,8 @@ The input topics of the  `finite state machine`  are defined by the transition t
 
 - sending a `msg` to the node containing a `msg.topic` set to a defined transition string triggers a state change.
 - `msg.control`= *reset* sets the machine to its initial state (*"state"*)
-- `msg.control`= *sync* is used to set the state manualy. its payload needs to be a json object, containing a *status* field
-- `msg.control`= *query* triggers a state query event and the current state is send to the output of the state machine. The option *Always send state change* needs to be enabled fo this.
+- `msg.control`= *sync* is used to set the state manually. Its payload needs to be a JSON object, containing a *status* field
+- `msg.control`= *query* triggers a state query event and the current state is sent to the output of the state machine. The option *Always send state change* needs to be enabled for this.
 
 ### Output
 
