@@ -3,7 +3,7 @@
 A finite state machine (FSM) implementation for node red. Displays also a graphical representation of the state machine.  
 ![node-appearance](images/node-appearance.png)
 
-** v0.2.1 handles the data object differently: transition messages that contain a data object now need to have the data set in msg.data instead of msg.payload **
+**v0.2.1 handles the data object differently: transition messages that contain a data object now need to have the data set in msg.data instead of msg.payload.**
 
 ## Installation
 
