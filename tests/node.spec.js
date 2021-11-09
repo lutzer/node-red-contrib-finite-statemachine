@@ -52,7 +52,8 @@ describe('Node Tests', function () {
     transitions: {
       'STOPPED': {
         'push': 'RUNNING',
-        'hit': 'BROKEN'
+        'hit': 'BROKEN',
+        'set': 'STOPPED'
       },
       'RUNNING': {
         'pull': 'STOPPED',
@@ -185,10 +186,35 @@ describe('Node Tests', function () {
     var n = helper.getNode('statemachine');
     var out = helper.getNode('out');
 
-    n.receive({ topic: 'push', payload: { x: 5} })
+    n.receive({ topic: 'push', data: { x: 5} })
 
     let msg = await listen(out,'input')
-    assert(msg.payload.data.x == 5)
+    assert.equal(msg.payload.data.x, 5)
+  });
+
+  it.only('statemachine should generate output when data changed, but not state changed', async function() {
+
+    var flow = [
+        { 
+          id: 'statemachine', 
+          type: 'finite-state-machine', 
+          fsmDefinition: JSON.stringify(definitions),
+          sendInitialState:false, 
+          sendStateWithoutChange:false,
+          showTransitionErrors:true,
+          wires: [['out']]
+        },
+        { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine');
+    var out = helper.getNode('out');
+
+    n.receive({ topic: 'set', data: { x: 99} })
+
+    let msg = await listen(out,'input')
+    assert.equal(msg.payload.data.x, 99)
   });
 
   it('should not output when state is unchanged and sendStateWithoutChange:false', async function() {
@@ -397,7 +423,7 @@ describe('Node Tests', function () {
     assert(msg === undefined)
   });
 
-  it.only('state object should not grow recursively when looped', async function() {
+  it('state object should not grow recursively when looped', async function() {
 
     var flow = [
       { 
@@ -422,7 +448,6 @@ describe('Node Tests', function () {
     // input messages recursivly and check that length is not changing
     let lastLength = null
     for (i=0;i<10;i++) {
-      console.log("loop"+i)
       msg.topic = i % 2 == 0 ? "pull" : "push"
       n.receive(msg)
       msg = await listen(out,'input')

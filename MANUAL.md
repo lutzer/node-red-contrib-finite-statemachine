@@ -133,7 +133,7 @@ The output contains:
 ### Handling of the *"data"* object
 - The *data* object within the "state" definition initializes the *data* object at the first start of the flow.
 - The contents of the *data* object within the "transitions" definition sets the *data* object at the according transition.
-- The contents of the *data* object may also be changed or extended by sending a `msg` with a valid transition (within `msg.topic`) containing a JSON object as payload with a *data* definition.
+- The contents of the *data* object may also be changed or extended by sending a `msg` with a valid transition (within `msg.topic`) containing the field *data* with a JSON object.
 
 **Note:** Sending a `msg` without a valid transition cannot change the *data* object (see example below).
 

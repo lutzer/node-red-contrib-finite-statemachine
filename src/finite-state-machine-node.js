@@ -61,7 +61,7 @@ module.exports = function (RED) {
 			
 			var action = {
 				type: msg.topic,
-				data : _.isObject(msg.payload) ? msg.payload.data : {}
+				data : _.isObject(msg.data) ? msg.data : {}
 			}
 			try {
 				nodeContext.machine.triggerAction(action, msg);
