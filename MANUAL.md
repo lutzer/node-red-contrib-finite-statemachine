@@ -124,7 +124,7 @@ Remark: This also may be a valid transition without any state change.
 The output contains:
 - *payload.status*: Outputs the state of the FSM.
 - *payload.data*: Outputs the *data* object of the FSM.
-- *payload.trigger*: Contains the original message that triggerd the state change.
+- *trigger*: Contains the original message that triggerd the state change.
 
 
 
