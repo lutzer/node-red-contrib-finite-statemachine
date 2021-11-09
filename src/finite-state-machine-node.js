@@ -30,7 +30,7 @@ module.exports = function (RED) {
 				sendOutput({
 					topic: 'state',
 					payload: state,
-					trigger: trigger
+					trigger: _.omit(trigger, "trigger") // prevent recursive adding of trigger object
 				});
 		});
 		
@@ -61,7 +61,7 @@ module.exports = function (RED) {
 			
 			var action = {
 				type: msg.topic,
-				data : _.isObject(msg.payload) ? msg.payload : {}
+				data : _.isObject(msg.payload) ? msg.payload.data : {}
 			}
 			try {
 				nodeContext.machine.triggerAction(action, msg);

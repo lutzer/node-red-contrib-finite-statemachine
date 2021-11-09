@@ -2,6 +2,7 @@ const assert = require('assert');
 const helper = require("node-red-node-test-helper");
 const { fromEvent } = require('rxjs');
 const { promisify } = require("util");
+const _ = require('lodash');
 
 helper.init(require.resolve('node-red'));
 
@@ -394,6 +395,44 @@ describe('Node Tests', function () {
 
     msg = await Promise.race([listen(out,'input'), timeout(200)])
     assert(msg === undefined)
+  });
+
+  it.only('state object should not grow recursively when looped', async function() {
+
+    var flow = [
+      { 
+        id: 'statemachine', 
+        type: 'finite-state-machine', 
+        fsmDefinition: JSON.stringify(definitions),
+        sendInitialState:false, 
+        sendStateWithoutChange:false,
+        showTransitionErrors:true,
+        wires: [['out']]
+      },
+      { id: 'out', type: 'helper'}
+    ];
+
+    await load(helper, StateMachineNode, flow)
+    var n = helper.getNode('statemachine')
+    var out = helper.getNode('out')
+
+    n.receive({ topic: 'push'})
+    let msg = await listen(out,'input')
+
+    // input messages recursivly and check that length is not changing
+    let lastLength = null
+    for (i=0;i<10;i++) {
+      console.log("loop"+i)
+      msg.topic = i % 2 == 0 ? "pull" : "push"
+      n.receive(msg)
+      msg = await listen(out,'input')
+      
+      let l = JSON.stringify(msg).length;
+      if (lastLength) {
+        assert.equal(lastLength,l)
+        lastLength = l
+      }
+    }
   });
 
 })
