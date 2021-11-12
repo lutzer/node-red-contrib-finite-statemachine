@@ -192,7 +192,7 @@ describe('Node Tests', function () {
     assert.equal(msg.payload.data.x, 5)
   });
 
-  it.only('statemachine should generate output when data changed, but not state changed', async function() {
+  it('statemachine should generate output when data changed, but not state changed', async function() {
 
     var flow = [
         { 
