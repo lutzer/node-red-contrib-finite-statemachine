@@ -1,3 +1,22 @@
+v2.1.2
+(2021-12-21)
+
+Changes:
+- Fixed fsm definition edit bug for node-red 2.1.4
+
+-----------------------------------------------------------------------------------------------------------
+
+v2.1.0
+(2021-11-09)
+
+Changes:
+- BREAKING CHANGES: transition messages that contain a data object now need to have the data set in 
+msg.data instead of msg.payload 
+- updated examples accordingly
+- fixed recursion bug of the trigger object
+- fixed recursion bug of the data object
+
+-----------------------------------------------------------------------------------------------------------
 v1.1.0
 (2020-09-03)
 
@@ -107,17 +126,5 @@ v0.2.09
 
 Changes / Improvements / Optimisations:
 - Documentation | Node usage description added.
-
------------------------------------------------------------------------------------------------------------
-
-v0.2.1
-(2021-11-09)
-
-Changes:
-- BREAKING CHANGES: transition messages that contain a data object now need to have the data set in 
-msg.data instead of msg.payload 
-- updated examples accordingly
-- fixed recursion bug of the trigger object
-- fixed recursion bug of the data object
 
 -----------------------------------------------------------------------------------------------------------

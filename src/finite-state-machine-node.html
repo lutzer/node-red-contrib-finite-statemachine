@@ -98,18 +98,9 @@
     outputLabels: ["state"], 
     oneditprepare: function() {
       
-      // create definiton input field
-      let definitionInput = $("#node-input-fsmDefinition")
-      definitionInput.typedInput({
-        default: 'json',
-        types: ['json'],
-        typeField: $("#node-input-fsmDefinition")
-      });
-      definitionInput.typedInput( 'value', this.fsmDefinition );
-      
-      definitionInput.on("change", function(type, value) {
+      function showStateMachine(jsonString) {
         try {
-          var json = JSON.parse(definitionInput.typedInput('value'));
+          var json = JSON.parse(jsonString);
           $('#fsm-graph').empty();
           setTimeout( function() {
             drawStateMachine(json, "100%", 500);
@@ -117,6 +108,22 @@
         } catch (e) {
           //do nothing
         }
+      }
+
+      showStateMachine(this.fsmDefinition);
+      
+      // create definiton input field
+      let definitionInput = $("#node-input-fsm-definition")
+      definitionInput.typedInput({
+        default: 'json',
+        types: ['json'],
+        typeField: $("#ode-input-fsm-definition")
+      });
+      definitionInput.typedInput('value', this.fsmDefinition);
+      
+      // react on input change
+      definitionInput.on('change', function(event, type, value) {
+        showStateMachine(value)
       });
     },
     oneditsave: function() {
@@ -131,8 +138,8 @@
     <input type="text" id="node-input-name" placeholder="Name">
   </div>
   <div class="form-row">
-    <label for="node-input-fsmDefinition"><i class="icon-tag"></i> FSM</label>
-    <input type="text" id="node-input-fsmDefinition" placeholder="Name">
+    <label for="node-input-fsm-definition"><i class="icon-tag"></i> FSM</label>
+    <input type="text" id="node-input-fsm-definition" placeholder="">
   </div>
   <div class="form-row">
     <label>&nbsp;</label>
