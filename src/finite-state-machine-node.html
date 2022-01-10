@@ -117,7 +117,7 @@
       definitionInput.typedInput({
         default: 'json',
         types: ['json'],
-        typeField: $("#ode-input-fsm-definition")
+        typeField: $("#node-input-fsm-definition")
       });
       definitionInput.typedInput('value', this.fsmDefinition);
       
@@ -127,7 +127,7 @@
       });
     },
     oneditsave: function() {
-      return;
+      this.fsmDefinition = $("#node-input-fsm-definition").typedInput('value');
     }
   });
 </script>
@@ -139,7 +139,7 @@
   </div>
   <div class="form-row">
     <label for="node-input-fsm-definition"><i class="icon-tag"></i> FSM</label>
-    <input type="text" id="node-input-fsm-definition" placeholder="">
+    <input type="text" id="node-input-fsm-definition">
   </div>
   <div class="form-row">
     <label>&nbsp;</label>

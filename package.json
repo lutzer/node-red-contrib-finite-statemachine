@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-finite-statemachine",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "A finite state machine implementation for node red.",
   "author": "Lutz Reiter",
   "license": "MIT",
